@@ -18,4 +18,4 @@ var ConverterRoutes = /** @class */ (function () {
     });
     return ConverterRoutes;
 }());
-exports.default = ConverterRoutes;
+exports.ConverterRoutes = ConverterRoutes;

@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var path_1 = __importDefault(require("path"));
+var Api_1 = __importDefault(require("./routes/Api"));
 var body_parser_1 = require("body-parser");
 var app = express_1.default();
 app.use(body_parser_1.json());
@@ -21,6 +22,8 @@ app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
     next();
 });
+//
+Api_1.default.initialize(app);
 //app.use("/api", converter);
 app.use(express_1.default.static(path_1.default.join(__dirname, "dist")));
 app.listen(4200, function () {

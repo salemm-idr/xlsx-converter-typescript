@@ -1,5 +1,6 @@
-import express, { Application, Response, Request } from "express";
+import express, { Application } from "express";
 import path from "path";
+import Api from "./routes/Api";
 import { json, urlencoded, raw, text } from "body-parser";
 const app: Application = express();
 
@@ -20,9 +21,11 @@ app.use(function(req, res, next) {
   );
   next();
 });
-//app.use("/api", converter);
+//*Give the power to initialize all the routes go for it on ./routes/Api.ts
+Api.initialize(app);
+
 app.use(express.static(path.join(__dirname, "dist")));
 
 app.listen(4200, () => {
-  console.log(`ready for action on port 4200  🔪 && 🔥`);
+  console.log(`ready for action on port 4200  🚀 🔥`);
 });
