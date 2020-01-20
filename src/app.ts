@@ -1,11 +1,8 @@
 import express, { Application, Response, Request } from "express";
 import path from "path";
 import { json, urlencoded, raw, text } from "body-parser";
-import fileUpload from "express-fileupload";
-import converter from "./routes/converter.route";
 const app: Application = express();
 
-app.use(fileUpload());
 app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(express.static(__dirname));
@@ -23,7 +20,9 @@ app.use(function(req, res, next) {
   );
   next();
 });
-app.use("/api", converter);
+//app.use("/api", converter);
+app.use(express.static(path.join(__dirname, "dist")));
+
 app.listen(4200, () => {
-  console.log(`ready for action on port 4200 🔪 && 🔥`);
+  console.log(`ready for action on port 4200  🔪 && 🔥`);
 });
