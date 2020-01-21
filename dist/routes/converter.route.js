@@ -8,10 +8,14 @@ var ConverterRoutes = /** @class */ (function () {
         this.fileConverter = new Converter_1.Converter();
     }
     Object.defineProperty(ConverterRoutes.prototype, "routes", {
+        //*manage routes on basic root /api/convert/'names'
+        /**
+         * *you can list all your routes here and manage with controllers
+         */
         get: function () {
             var controller = this.fileConverter;
             router.post("/xfile", controller.convert);
-            return router;
+            return router; //*must return the same router
         },
         enumerable: true,
         configurable: true
