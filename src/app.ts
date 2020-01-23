@@ -3,9 +3,8 @@ import path from "path";
 import Api from "./routes/Api";
 import bodyParser from "body-parser";
 import fileUpload from "express-fileupload";
-const app: Application = express();
-app.use(fileUpload());
-
+const app: express.Express = express();
+app.use(fileUpload({ debug: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
