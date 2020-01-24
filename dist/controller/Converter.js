@@ -3,42 +3,44 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var xlsx_1 = __importDefault(require("xlsx"));
-var fs_1 = __importDefault(require("fs"));
 var path_1 = __importDefault(require("path"));
+var FileCall_1 = require("../callup/FileCall");
 var directoryPath = path_1.default.join(__dirname, "./uploads");
 var directoryOut = path_1.default.join(__dirname, "outputs");
 var transformedJson = path_1.default.join(__dirname, "transformed");
 /**
  * *realize all the engine of endpoint  with the information
+ * TODO revisar la asincronia revisar si se debe crear una nueva serie de clase para los metodos y que devuelvan un valor
  */
 var Converter = /** @class */ (function () {
+    // static guardaArchivo(xfileName: string) {
+    //   console.log(xfileName, "en guardaArchivo");
+    //   return new Promise((resolve, reject) => {
+    //     let leidoexcel = xlsx.readFile(`${directoryPath}\\${xfileName}`, {
+    //       cellDates: true
+    //     });
+    //     let tabs: string[] = leidoexcel.SheetNames;
+    //     function constructWorkSheet(tabs: string[]) {
+    //       tabs.forEach(item => {
+    //         let worksheet = leidoexcel.Sheets[item];
+    //         let data = xlsx.utils.sheet_to_json(worksheet);
+    //         writeJsonToFolder(data, item);
+    //       });
+    //     }
+    //     function writeJsonToFolder(file: object, name: string) {
+    //       fileSystem.writeFileSync(
+    //         `${directoryOut}\\output_${name}.json`,
+    //         JSON.stringify(file, null, 2)
+    //       );
+    //     }
+    //     constructWorkSheet(tabs);
+    //   });
+    // }
     // static transFile() {}
     function Converter() {
     }
     Converter.isUploaded = function (file) {
         return (typeof file === "object" && file.name !== undefined);
-    };
-    Converter.guardaArchivo = function (xfileName) {
-        console.log(xfileName, "en guardaArchivo");
-        return new Promise(function (resolve, reject) {
-            var leidoexcel = xlsx_1.default.readFile(directoryPath + "\\" + xfileName, {
-                cellDates: true
-            });
-            var tabs = leidoexcel.SheetNames;
-            function constructWorkSheet(tabs) {
-                tabs.forEach(function (item) {
-                    var worksheet = leidoexcel.Sheets[item];
-                    var data = xlsx_1.default.utils.sheet_to_json(worksheet);
-                    writeJsonToFolder(data, item);
-                });
-            }
-            function writeJsonToFolder(file, name) {
-                fs_1.default.writeFileSync(directoryOut + "\\output_" + name + ".json", JSON.stringify(file, null, 2));
-            }
-            constructWorkSheet(tabs);
-            resolve(xfileName);
-        });
     };
     Converter.prototype.convert = function (req, res, next) {
         if (typeof req.files === "object") {
@@ -47,6 +49,7 @@ var Converter = /** @class */ (function () {
             res.status(201).json({ message: "completado" });
             next();
             if (Converter.isUploaded(xfile)) {
+                var fileCall = new FileCall_1.FileCall();
                 console.log(xfile.name);
                 xfile.mv("src\\uploads\\" + xfile.name, function (err) {
                     if (err) {
@@ -56,9 +59,8 @@ var Converter = /** @class */ (function () {
                             error: new Error("File not found")
                         });
                     }
-                    next();
                 });
-                Converter.guardaArchivo(xfile.name);
+                fileCall.readFilex(xfile.name);
             }
         }
     };
