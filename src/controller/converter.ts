@@ -1,70 +1,49 @@
 import { Request, Response, NextFunction } from "express-serve-static-core";
-import xlsx from "xlsx";
-import fileSystem, { read } from "fs";
 import fileUpload from "express-fileupload";
-import path from "path";
 import { FileCall } from "../callup/FileCall";
-const directoryPath: string = path.join(__dirname, "./uploads");
-const directoryOut: string = path.join(__dirname, "outputs");
-const transformedJson: string = path.join(__dirname, "transformed");
 type UploadedFile = fileUpload.UploadedFile;
+import { WorkSheet, WorkBook } from "xlsx";
 
 /**
  * *realize all the engine of endpoint  with the information
  * TODO revisar la asincronia revisar si se debe crear una nueva serie de clase para los metodos y que devuelvan un valor
  */
+
+interface dataUtils {
+  name: string;
+  file: object;
+}
 export class Converter {
-  static isUploaded(file: UploadedFile | UploadedFile[]): file is UploadedFile {
-    return (
-      typeof file === "object" && (file as UploadedFile).name !== undefined
-    );
-  }
-  // static guardaArchivo(xfileName: string) {
-  //   console.log(xfileName, "en guardaArchivo");
-  //   return new Promise((resolve, reject) => {
-  //     let leidoexcel = xlsx.readFile(`${directoryPath}\\${xfileName}`, {
-  //       cellDates: true
-  //     });
-  //     let tabs: string[] = leidoexcel.SheetNames;
-  //     function constructWorkSheet(tabs: string[]) {
-  //       tabs.forEach(item => {
-  //         let worksheet = leidoexcel.Sheets[item];
-  //         let data = xlsx.utils.sheet_to_json(worksheet);
-  //         writeJsonToFolder(data, item);
-  //       });
-  //     }
-  //     function writeJsonToFolder(file: object, name: string) {
-  //       fileSystem.writeFileSync(
-  //         `${directoryOut}\\output_${name}.json`,
-  //         JSON.stringify(file, null, 2)
-  //       );
-  //     }
-  //     constructWorkSheet(tabs);
-  //   });
-  // }
-  // static transFile() {}
+  //filex: WorkBook = <WorkBook>{};
   constructor() {}
 
-  public convert(req: Request, res: Response, next: NextFunction) {
-    if (typeof req.files === "object") {
-      let xfile = req.files.file;
-      console.log(xfile, "in convert method");
-      res.status(201).json({ message: "completado" });
-      next();
-      if (Converter.isUploaded(xfile)) {
-        const fileCall = new FileCall();
-        console.log(xfile.name);
-        xfile.mv(`src\\uploads\\${xfile.name}`, err => {
-          if (err) {
-            console.log(err);
-            return res.status(204).json({
-              message: "no se ha podido mover el archivo",
-              error: new Error("File not found")
-            });
-          }
+  public async convert(req: Request, res: Response, next: NextFunction) {
+    try {
+      const xfile = req.files;
+      FileCall.moveFile(xfile)
+        .then((xfileName: string) => {
+          Converter.todoAll(xfileName);
+        })
+        .then(response => {
+          res
+            .status(200)
+            .json({ message: "Se ha cargado con exito el archivo" });
         });
-        fileCall.readFilex(xfile.name);
-      }
+    } catch (error) {
+      console.log("Error al mover el archivo");
+      res.status(400).json({ message: "Error moviendo el archivo", error });
     }
+  }
+
+  static async todoAll(xfileName: string) {
+    //*paso 1 leer el archivo desde FileCall y regresar el valor
+    const filex: WorkBook = <WorkBook>await FileCall.readFilex(xfileName);
+    //*paso 2  enviar el filex a constructedWorkSheet y regresar el valor
+    const constructedWorkSheet: WorkSheet = await FileCall.constructWorkSheet(
+      filex
+    );
+    // const composedToJson = await FileCall.writeJsonToFolder(
+    //   constructedWorkSheet
+    // );
   }
 }

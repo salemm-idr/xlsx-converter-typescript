@@ -1,29 +1,64 @@
-import xlsx, { WorkSheet } from "xlsx";
+import xlsx, { WorkSheet, WorkBook } from "xlsx";
+import filesystem from "fs";
+import fileUpload from "express-fileupload";
 import path from "path";
-const directoryPath: string = path.join(__dirname, "src/uploads");
+type UploadedFile = fileUpload.UploadedFile;
+const directoryPath = path.join(__dirname, "..\\uploads");
+
 export class FileCall {
+  static isUploaded(file: UploadedFile | UploadedFile[]): file is UploadedFile {
+    return (
+      typeof file === "object" && (file as UploadedFile).name !== undefined
+    );
+  }
   constructor() {}
 
-  readFilex(xfileName: string) {
-    return new Promise((resolve, reject) => {
-      const leidoexcel = xlsx.readFile(`src\\uploads\\${xfileName}`, {
-        cellDates: true
-      });
-      //   resolve(leidoexcel);
-      //   console.log(typeof leidoexcel, "lo lograste maldito hijo de perra");
-      if (leidoexcel) {
-        resolve(leidoexcel);
-        this.constructWorkSheet(leidoexcel);
-      } else if (!leidoexcel) {
-        reject(new Error("no se ha podido leer el archivo"));
+  static moveFile(xfile: any | object) {
+    return new Promise<string>((resolve, reject) => {
+      if (typeof xfile === "object") {
+        xfile = xfile.file;
+        if (FileCall.isUploaded(xfile)) {
+          xfile.mv(`${directoryPath}\\${xfile.name}`, err => {
+            if (err) {
+              console.log(err);
+              reject(new Error("No se ha movido el archivo"));
+            }
+          });
+          resolve(xfile.name);
+        }
       }
     });
   }
-  constructWorkSheet(filex: WorkSheet) {
-    console.log(filex, "en filecall");
-    let tabs: [] = filex.SheetNames;
-    tabs.forEach((element: string) => {
-      console.log(element);
+
+  static readFilex(xfileName: string) {
+    return new Promise((resolve, reject) => {
+      const workbook = xlsx.readFile(`${directoryPath}\\${xfileName}`, {
+        cellDates: true,
+        type: "array"
+      });
+      resolve(workbook);
+    });
+  }
+
+  static constructWorkSheet(workbook: WorkBook) {
+    return new Promise<WorkSheet>((resolve, reject) => {
+      let tabs: string[] = workbook.SheetNames;
+      console.log(tabs, "in filecall");
+      tabs.map(tab => {
+        let worksheet: WorkSheet = workbook.Sheets[tab];
+        const data = xlsx.utils.sheet_to_json(worksheet, { header: tabs });
+        const dataRes = { data, name: tab };
+        resolve(dataRes);
+      });
+    });
+  }
+
+  static writeJsonToFolder(ws: WorkSheet) {
+    return new Promise((resolve, reject) => {
+      filesystem.writeFileSync(
+        `src\\outputs\\${ws.name}.json`,
+        JSON.stringify(ws.data, null, 2)
+      );
     });
   }
 }
