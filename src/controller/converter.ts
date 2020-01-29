@@ -1,7 +1,5 @@
-import { Request, Response, NextFunction } from "express-serve-static-core";
-import fileUpload from "express-fileupload";
+import { Request, Response } from "express-serve-static-core";
 import { FileCall } from "../callup/FileCall";
-type UploadedFile = fileUpload.UploadedFile;
 import { WorkSheet, WorkBook } from "xlsx";
 
 /**
@@ -9,15 +7,9 @@ import { WorkSheet, WorkBook } from "xlsx";
  * TODO revisar la asincronia revisar si se debe crear una nueva serie de clase para los metodos y que devuelvan un valor
  */
 
-interface dataUtils {
-  name: string;
-  file: object;
-}
 export class Converter {
-  //filex: WorkBook = <WorkBook>{};
   constructor() {}
-
-  public async convert(req: Request, res: Response, next: NextFunction) {
+  public async convert(req: Request, res: Response) {
     try {
       const xfile = req.files;
       FileCall.moveFile(xfile)
@@ -27,11 +19,13 @@ export class Converter {
         .then(response => {
           res
             .status(200)
-            .json({ message: "Se ha cargado con exito el archivo" });
+            .json({
+              message: "Se ha cargado con exito el archivo ⚡️ ⚡️ ⚡️"
+            });
         });
     } catch (error) {
-      console.log("Error al mover el archivo");
-      res.status(400).json({ message: "Error moviendo el archivo", error });
+      console.log("Error al mover el archivo ❌");
+      res.status(400).json({ message: "Error moviendo el archivo ❌", error });
     }
   }
 
@@ -42,8 +36,5 @@ export class Converter {
     const constructedWorkSheet: WorkSheet = await FileCall.constructWorkSheet(
       filex
     );
-    // const composedToJson = await FileCall.writeJsonToFolder(
-    //   constructedWorkSheet
-    // );
   }
 }

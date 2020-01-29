@@ -44,7 +44,7 @@ var FileCall = /** @class */ (function () {
             console.log(tabs, "in filecall");
             tabs.map(function (tab) {
                 var worksheet = workbook.Sheets[tab];
-                var data = xlsx_1.default.utils.sheet_to_json(worksheet, { header: tabs });
+                var data = xlsx_1.default.utils.sheet_to_json(worksheet);
                 var dataRes = { data: data, name: tab };
                 resolve(dataRes);
             });

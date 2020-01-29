@@ -66,7 +66,7 @@ var Converter = /** @class */ (function () {
     };
     Converter.todoAll = function (xfileName) {
         return __awaiter(this, void 0, void 0, function () {
-            var filex, constructedWorkSheet;
+            var filex, constructedWorkSheet, composedToJson;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, FileCall_1.FileCall.readFilex(xfileName)];
@@ -75,6 +75,9 @@ var Converter = /** @class */ (function () {
                         return [4 /*yield*/, FileCall_1.FileCall.constructWorkSheet(filex)];
                     case 2:
                         constructedWorkSheet = _a.sent();
+                        return [4 /*yield*/, FileCall_1.FileCall.writeJsonToFolder(constructedWorkSheet)];
+                    case 3:
+                        composedToJson = _a.sent();
                         return [2 /*return*/];
                 }
             });
