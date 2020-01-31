@@ -36,50 +36,29 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var FileCall_1 = require("../callup/FileCall");
+/**
+ * *realize all the engine of endpoint  with the information
+ * TODO revisar la asincronia revisar si se debe crear una nueva serie de clase para los metodos y que devuelvan un valor
+ */
 var Converter = /** @class */ (function () {
-    //filex: WorkBook = <WorkBook>{};
     function Converter() {
     }
-    Converter.prototype.convert = function (req, res, next) {
+    Converter.prototype.convert = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var xfile;
+            var xfile, Xfile_1;
             return __generator(this, function (_a) {
                 try {
                     xfile = req.files;
-                    FileCall_1.FileCall.moveFile(xfile)
-                        .then(function (xfileName) {
-                        Converter.todoAll(xfileName);
-                    })
-                        .then(function (response) {
-                        res
-                            .status(200)
-                            .json({ message: "Se ha cargado con exito el archivo" });
+                    Xfile_1 = new FileCall_1.FileCall();
+                    Xfile_1.moveFile(xfile).then(function (xfileName) {
+                        Xfile_1.doitAll(xfileName);
                     });
                 }
                 catch (error) {
-                    console.log("Error al mover el archivo");
-                    res.status(400).json({ message: "Error moviendo el archivo", error: error });
+                    console.log("Error al mover el archivo ❌");
+                    res.status(400).json({ message: "Error moviendo el archivo ❌", error: error });
                 }
                 return [2 /*return*/];
-            });
-        });
-    };
-    Converter.todoAll = function (xfileName) {
-        return __awaiter(this, void 0, void 0, function () {
-            var filex, constructedWorkSheet, composedToJson;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, FileCall_1.FileCall.readFilex(xfileName)];
-                    case 1:
-                        filex = _a.sent();
-                        return [4 /*yield*/, FileCall_1.FileCall.constructWorkSheet(filex)];
-                    case 2:
-                        constructedWorkSheet = _a.sent();
-                        return [4 /*yield*/, FileCall_1.FileCall.writeJsonToFolder(constructedWorkSheet)];
-                    case 3:
-                        composedToJson = _a.sent();
-                        return [2 /*return*/];
-                }
             });
         });
     };

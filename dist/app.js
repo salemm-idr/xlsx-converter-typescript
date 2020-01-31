@@ -9,7 +9,11 @@ var Api_1 = __importDefault(require("./routes/Api"));
 var body_parser_1 = __importDefault(require("body-parser"));
 var express_fileupload_1 = __importDefault(require("express-fileupload"));
 var app = express_1.default();
-app.use(express_fileupload_1.default({ debug: true }));
+//app.use(fileUpload({ debug: true }));
+app.use(express_fileupload_1.default({
+    useTempFiles: true,
+    tempFileDir: "/uploads/"
+}));
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.static(__dirname));

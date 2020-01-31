@@ -13,33 +13,47 @@ export class FileCall {
   }
   constructor() {}
 
-  static moveFile(xfile: any | object) {
+  public async moveFile(xfile: any | object) {
     return new Promise<string>((resolve, reject) => {
       if (typeof xfile === "object") {
-        const Xfile = xfile.file;
+        let Xfile = xfile.file;
         console.log(Xfile);
         if (FileCall.isUploaded(Xfile)) {
           Xfile.mv(`${directoryPath}\\${Xfile.name}`, err => {
             if (err) {
               console.log(err);
               reject(new Error("No se ha movido el archivo ⚠️"));
-            }
+            } else resolve(Xfile.name);
           });
-          resolve(Xfile.name);
         }
       }
     });
   }
 
-  static readFilex(xfileName: string) {
-    return new Promise((resolve, reject) => {
-      console.log(xfileName, "en readfilex 🔧");
-      let workbook = readFile(`${directoryPath}\\${xfileName}`);
-      resolve(workbook);
-    });
+  public readFilex(xfileName: string) {
+    try {
+      return new Promise((resolve, reject) => {
+        console.log(xfileName, "en readfilex   🔧");
+        let workbook: WorkBook = xlsx.readFile(
+          `${directoryPath}\\${xfileName}`,
+          {
+            cellDates: true
+          }
+        );
+        console.log("propiedades", workbook.SheetNames);
+        resolve(workbook);
+        // const { Sheets } = workbook;
+        // if (Object.entries(Sheets).length === 0) {
+        //   console.log("el objeto viene vacio al leer el archivo");
+        //   reject(workbook);
+        // } else resolve(workbook);
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  static constructWorkSheet(workbook: WorkBook) {
+  public constructWorkSheet(workbook: WorkBook) {
     return new Promise<WorkSheet>((resolve, reject) => {
       const tabs: string[] = workbook.SheetNames;
       console.log(tabs, "in filecall 👌");
@@ -52,12 +66,18 @@ export class FileCall {
     });
   }
 
-  static writeJsonToFolder(data: object, name: string) {
+  public writeJsonToFolder(data: object, name: string) {
     return new Promise((resolve, reject) => {
       filesystem.writeFileSync(
         `src\\outputs\\${name}.json`,
         JSON.stringify(data, null, 2)
       );
     });
+  }
+
+  public async doitAll(name: string) {
+    console.log(name);
+    const filex: WorkBook = <WorkBook>await this.readFilex(name);
+    const contructedWorkSheet = await this.constructWorkSheet(filex);
   }
 }
