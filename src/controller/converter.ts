@@ -21,4 +21,13 @@ export class Converter {
       res.status(400).json({ message: "Error moviendo el archivo ❌", error });
     }
   }
+
+  // public getJson(req: Request, res: Response) {
+  //   try {
+  //     const jsoncall = new FileCall();
+  //     jsoncall.readJson();
+  //   } catch (error) {
+  //     console.log("Error al leer el archivo");
+  //   }
+  // }
 }

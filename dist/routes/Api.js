@@ -7,7 +7,9 @@ var Api = /** @class */ (function () {
     }
     Api.initialize = function (app) {
         app.use("/api/convert", new converter_route_1.ConverterRoutes().routes);
+        app.use("/api/convert", new converter_route_1.ConverterRoutes().routes);
     };
     return Api;
 }());
 exports.default = Api;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQXBpLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL3JvdXRlcy9BcGkudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFDQSxxREFBb0Q7QUFFcEQsd0JBQXdCO0FBQ3hCO0lBQUE7SUFLQSxDQUFDO0lBSmUsY0FBVSxHQUF4QixVQUF5QixHQUF3QjtRQUMvQyxHQUFHLENBQUMsR0FBRyxDQUFDLGNBQWMsRUFBRSxJQUFJLGlDQUFlLEVBQUUsQ0FBQyxNQUFNLENBQUMsQ0FBQztRQUN0RCxHQUFHLENBQUMsR0FBRyxDQUFDLGNBQWMsRUFBRSxJQUFJLGlDQUFlLEVBQUUsQ0FBQyxNQUFNLENBQUMsQ0FBQztJQUN4RCxDQUFDO0lBQ0gsVUFBQztBQUFELENBQUMsQUFMRCxJQUtDIn0=
