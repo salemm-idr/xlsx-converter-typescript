@@ -2,7 +2,7 @@ import xlsx, { WorkSheet, WorkBook } from "xlsx";
 import filesystem from "fs";
 import fileUpload from "express-fileupload";
 import path from "path";
-import { Writable, WritableOptions } from "stream";
+import { Writable, WritableOptions, Transform } from "stream";
 
 type UploadedFile = fileUpload.UploadedFile;
 const directoryPath = path.join(__dirname, "..\\uploads");
@@ -65,43 +65,55 @@ export class FileCall {
         let toSave = {} as toWrite;
         worksheet = workbook.Sheets[tab];
         console.log(tab, "nombre de la tabla individual 🚀");
-        let data = xlsx.utils.sheet_to_json(worksheet, {
+        let data: (string | number)[] = xlsx.utils.sheet_to_json(worksheet, {
           header: 1
         });
+        this.constructNewJson(data);
         // let data = xlsx.stream.to_json(worksheet, { header: 1 });
         toSave.name = tab;
         toSave.hojaAoA = data;
         return toSave;
       });
+
       resolve(daFile);
     });
   }
 
   public async writeJsonToFolder(wrote: any) {
-    return new Promise<object>((resolve, reject) => {
-      setTimeout(() => console.log("Escribiendo nuevo AoA 🖨"), 200);
+    setTimeout(() => console.log("Escribiendo nuevo AoA 🖨"), 200);
 
+    return new Promise<string>((resolve, reject) => {
+      // let writeStreamer = filesystem.createWriteStream(
+      //   `src\\outputs\\${wrote[0].name}.json`
+      // );
       filesystem.writeFileSync(
         `src\\outputs\\${wrote[0].name}.json`,
         JSON.stringify(wrote[0].hojaAoA, null, 2)
       );
-      let grabado = filesystem.readFileSync(
-        `src\\outputs\\${wrote[0].name}.json`,
-        "utf8"
-      );
-      let datas = JSON.parse(grabado);
-      console.log("largo de datas", datas.length);
-      //setTimeout(() => resolve(datas), 500);
-      resolve(datas);
-    });
+
+      resolve(wrote[0].name);
+    }); //.then(name => this.constructNewJson(name));
   }
 
-  public async constructNewJson(grabado: any) {
-    setTimeout(() => console.log("Refactorizando json 🔧"), 200);
-
-    return new Promise<ArrayBuffer>((resolve, reject) => {
+  public async constructNewJson(grabado: (string | number)[]) {
+    setTimeout(() => console.log("constuyendo nuevo json"), 200);
+    return new Promise((resolve, reject) => {
+      //*version streamer
+      // let myReadStream = filesystem.createReadStream(
+      //   `src\\outputs\\${chunkName}.json`
+      // );
+      // let grabado = myReadStream.on("data", chunk => {
+      //   console.log(chunk);
+      //   return chunk;
+      // });
+      //*version readfile sync
+      // let data = filesystem.readFileSync(
+      //   `src\\outputs\\${chunkName}.json`,
+      //   "utf8"
+      // );
+      //let grabado = JSON.parse(data);
       let dataWorked: any = [];
-      grabado.forEach((element: [], index: number) => {
+      grabado.forEach((element: any, index: number) => {
         const texted: any = element.map((innerText: string) => {
           if (typeof innerText === "string") {
             let recortado = innerText
@@ -119,7 +131,7 @@ export class FileCall {
         }
       });
       resolve(dataWorked);
-    });
+    }).then(dataWorked => this.composeNewObject(dataWorked));
   }
 
   public async composeNewObject(dataWorked: any) {
@@ -133,27 +145,39 @@ export class FileCall {
         });
         return xFile;
       });
-      filesystem.writeFileSync(
-        `src\\tiras\\EXITO2callBack.json`,
-        JSON.stringify(nodos, null, 2)
+      //*stream version
+      let myWriteStream = filesystem.createWriteStream(
+        `src\\tiras\\stream.json`
       );
+      let chunks = JSON.stringify(nodos, null, 2);
+      myWriteStream.write(chunks);
+      // filesystem.writeFileSync(
+      //   `src\\tiras\\EXITO2callBack.json`,
+      //   JSON.stringify(nodos, null, 2)
+      // );
 
       console.log("grabando nuevo JSON ✍️");
       resolve(nodos);
-    }).then(() => this.writeNewExcel());
+    }); //.then(nodos => this.writeNewExcel(nodos));
   }
-  public async writeNewExcel() {
+  public async writeNewExcel(nodos: object) {
     console.log("writefile entrance");
     return new Promise((resolve, reject) => {
       setTimeout(() => console.log("Escribe nuevo excel 👷"), 200);
+      let stream = xlsx.stream.to_json(nodos, { raw: true });
+      let conv = new Transform({ writableObjectMode: true });
+      conv._transform = (obj, e, cb) => {
+        cb(null, JSON.stringify(obj) + "\n");
+      };
+      stream.pipe(conv);
+      conv.pipe(process.stdout);
 
       /**crea el libro de trabajo */
       const wb: WorkBook = xlsx.utils.book_new();
       /**nombre de la hoja string */
       const ws_name = "transformed";
       /**crea la hoja de trabajo */
-      //let ws: WorkSheet = xlsx.stream.to_json(nodos);
-      //*version streamer
+      // let ws: WorkSheet = xlsx.stream.to_json();
       /**junta el libro creado con la hoja  */
       // xlsx.utils.book_append_sheet(wb, ws, ws_name);
       /**escribe el libro en la ruta especifica */
@@ -162,12 +186,23 @@ export class FileCall {
       resolve(wb);
     }); //.then(res => console.log("Todo se ha guarado con exito 🙉 🙈 🙊"));
   }
+
+  //todo Eliminar las conexion de la lectura
+  //todo agregar los nuevos paths para la escritura del json
+  //todo mejorar la sintaxis de las variables
+  //todo intentar escribir despues de eso el excel con el streamer del xlsx
+  //todo intentar escribir el excel con el streamer de node
+  //todohacer refactor del codigo y dejaro mas limpio
+  //todo comentar las funciones y sintantic
   public async doitAll(name: string) {
     const filex: WorkBook = <WorkBook>await this.readFilex(name);
     const constructedWorkSheet: object = await this.constructWorkSheet(filex);
-    const writeJson = await this.writeJsonToFolder(constructedWorkSheet);
-    const newTable = await this.constructNewJson(writeJson);
-    const newObject = await this.composeNewObject(newTable);
+    const writeJson = <string>(
+      await this.writeJsonToFolder(constructedWorkSheet)
+    );
+    //const readJson = await this.readJsonFromFolder(writeJson);
+    //const newTable = await this.constructNewJson(writeJson);
+    //const newObject = await this.composeNewObject(newTable);
     //const newExcel = await this.writeNewExcel();
   }
 }
