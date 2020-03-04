@@ -68,11 +68,23 @@ export class FileCall {
         let data: (string | number)[] = xlsx.utils.sheet_to_json(worksheet, {
           header: 1
         });
-        this.constructNewJson(data);
-        // let data = xlsx.stream.to_json(worksheet, { header: 1 });
+        //this.constructNewJson(data);
+        // let stream = xlsx.stream.to_json(worksheet, { raw: true });
+        // var conv = new Transform({ writableObjectMode: true });
+        // conv._transform = function(obj, e, cb) {
+        //   cb(null, JSON.stringify(obj, null, 2));
+        // };
+        // let myWriteStream = filesystem.createWriteStream(
+        //   "src\\tiras\\stream.json"
+        // );
+        // stream.pipe(conv);
+        // conv.pipe(myWriteStream);
         toSave.name = tab;
         toSave.hojaAoA = data;
+        //this.writeJsonToFolder(toSave);
+
         return toSave;
+        //return data;
       });
 
       resolve(daFile);
@@ -81,7 +93,6 @@ export class FileCall {
 
   public async writeJsonToFolder(wrote: any) {
     setTimeout(() => console.log("Escribiendo nuevo AoA 🖨"), 200);
-
     return new Promise<string>((resolve, reject) => {
       // let writeStreamer = filesystem.createWriteStream(
       //   `src\\outputs\\${wrote[0].name}.json`
@@ -90,28 +101,31 @@ export class FileCall {
         `src\\outputs\\${wrote[0].name}.json`,
         JSON.stringify(wrote[0].hojaAoA, null, 2)
       );
-
       resolve(wrote[0].name);
-    }); //.then(name => this.constructNewJson(name));
+    }).then(name => this.constructNewJson(name));
   }
 
-  public async constructNewJson(grabado: (string | number)[]) {
+  public async constructNewJson(name: string) {
     setTimeout(() => console.log("constuyendo nuevo json"), 200);
     return new Promise((resolve, reject) => {
       //*version streamer
-      // let myReadStream = filesystem.createReadStream(
-      //   `src\\outputs\\${chunkName}.json`
+      let myReadStream = filesystem.createReadStream(
+        `src\\outputs\\${name}.json`
+      );
+      // let myWriteStream = filesystem.createWriteStream(
+      //   `src\\tiras\\${name}.json`
       // );
-      // let grabado = myReadStream.on("data", chunk => {
-      //   console.log(chunk);
-      //   return chunk;
-      // });
+      myReadStream.on("data", chunk => {
+        let buf = Buffer.from(chunk, "utf-8");
+        let grabado = JSON.stringify(buf);
+        console.table(grabado.slice(0, 20));
+      });
+
       //*version readfile sync
-      // let data = filesystem.readFileSync(
-      //   `src\\outputs\\${chunkName}.json`,
-      //   "utf8"
-      // );
-      //let grabado = JSON.parse(data);
+      /* let data = filesystem.readFileSync(`src\\outputs\\${name}.json`, "utf8");
+      let grabado = JSON.parse(data);
+      //console.log(grabado.slice(0, 20));
+
       let dataWorked: any = [];
       grabado.forEach((element: any, index: number) => {
         const texted: any = element.map((innerText: string) => {
@@ -129,9 +143,9 @@ export class FileCall {
           //return setTimeout(() => resolve(dataWorked), 600);
           return dataWorked;
         }
-      });
-      resolve(dataWorked);
-    }).then(dataWorked => this.composeNewObject(dataWorked));
+      });*/
+      //resolve(dataWorked);
+    }); //.then(dataWorked => this.composeNewObject(dataWorked));
   }
 
   public async composeNewObject(dataWorked: any) {
@@ -146,32 +160,36 @@ export class FileCall {
         return xFile;
       });
       //*stream version
+      // let myReadStream = filesystem.createReadStream(
+      //   `src\\outputs\\${name}.json`
+      // );
       let myWriteStream = filesystem.createWriteStream(
-        `src\\tiras\\stream.json`
+        `src\\tiras\\streamXXX.json`
       );
-      let chunks = JSON.stringify(nodos, null, 2);
-      myWriteStream.write(chunks);
+
+      myWriteStream.write(JSON.stringify(nodos, null, 2));
+      //*writeSync version
       // filesystem.writeFileSync(
       //   `src\\tiras\\EXITO2callBack.json`,
       //   JSON.stringify(nodos, null, 2)
       // );
 
       console.log("grabando nuevo JSON ✍️");
-      resolve(nodos);
-    }); //.then(nodos => this.writeNewExcel(nodos));
+      resolve();
+    }).then(() => this.writeNewExcel());
   }
-  public async writeNewExcel(nodos: object) {
-    console.log("writefile entrance");
+  public async writeNewExcel() {
     return new Promise((resolve, reject) => {
       setTimeout(() => console.log("Escribe nuevo excel 👷"), 200);
-      let stream = xlsx.stream.to_json(nodos, { raw: true });
-      let conv = new Transform({ writableObjectMode: true });
-      conv._transform = (obj, e, cb) => {
-        cb(null, JSON.stringify(obj) + "\n");
-      };
-      stream.pipe(conv);
-      conv.pipe(process.stdout);
-
+      let myReadStream = filesystem.createReadStream(
+        `src\\tiras\\streamXXX.json`
+      );
+      let myWriteStream = filesystem.createWriteStream(
+        "src\\constructedFile\\streamExcel.xlsx"
+      );
+      myReadStream.on("data", chunk => {
+        console.log(chunk);
+      });
       /**crea el libro de trabajo */
       const wb: WorkBook = xlsx.utils.book_new();
       /**nombre de la hoja string */
@@ -183,7 +201,7 @@ export class FileCall {
       /**escribe el libro en la ruta especifica */
       //xlsx.writeFile(wb, "src\\constructedFile\\streamer.xlsx");
 
-      resolve(wb);
+      resolve();
     }); //.then(res => console.log("Todo se ha guarado con exito 🙉 🙈 🙊"));
   }
 
@@ -192,14 +210,12 @@ export class FileCall {
   //todo mejorar la sintaxis de las variables
   //todo intentar escribir despues de eso el excel con el streamer del xlsx
   //todo intentar escribir el excel con el streamer de node
-  //todohacer refactor del codigo y dejaro mas limpio
+  //todo hacer refactor del codigo y dejaro mas limpio
   //todo comentar las funciones y sintantic
   public async doitAll(name: string) {
     const filex: WorkBook = <WorkBook>await this.readFilex(name);
     const constructedWorkSheet: object = await this.constructWorkSheet(filex);
-    const writeJson = <string>(
-      await this.writeJsonToFolder(constructedWorkSheet)
-    );
+    const writeJson = await this.writeJsonToFolder(constructedWorkSheet);
     //const readJson = await this.readJsonFromFolder(writeJson);
     //const newTable = await this.constructNewJson(writeJson);
     //const newObject = await this.composeNewObject(newTable);
