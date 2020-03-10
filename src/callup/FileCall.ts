@@ -153,11 +153,6 @@ export class FileCall {
         };
         stream.pipe(conv);
         conv.pipe(process.stdout);
-        // const wb: WorkBook = xlsx.utils.book_new();
-        // const ws_name = "transformed";
-        // let ws: WorkSheet = xlsx.utils.json_to_sheet(chunk);
-        // xlsx.utils.book_append_sheet(wb, ws, ws_name);
-        // xlsx.writeFile(wb, "src\\constructedFile\\streamer.xlsx");
       });*/
       //*writeSync version
       // filesystem.writeFileSync(
@@ -211,7 +206,6 @@ export class FileCall {
     const constructedWorkSheet: any = await this.constructWorkSheet(filex);
     const newTable = await this.constructNewJson(constructedWorkSheet);
     const newObject = await this.composeNewObject(newTable);
-    const newExcel = await this.writeNewExcel();
 
     return [filex, constructedWorkSheet, newTable, newObject];
   }
