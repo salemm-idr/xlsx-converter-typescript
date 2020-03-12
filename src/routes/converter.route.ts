@@ -1,4 +1,4 @@
-import { Converter } from "../controller/Converter";
+import { Converter } from "../controller/converter";
 import { Router } from "express";
 const router = Router();
 
