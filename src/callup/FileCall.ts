@@ -108,8 +108,28 @@ export class FileCall {
       //   `${dirOutputs}/${wrote.name}.json`,
       //   JSON.stringify(wrote.hojaAoA, null, 2)
       // );
-      resolve(wrote.name);
-    }).then(name => this.constructNewJson(name));
+      //!esto esta ingresado a prueba
+      let dataWorked: any = [];
+      wrote.hojaAoA.forEach((element: any, index: number) => {
+        const texted: any = element.map((innerText: string) => {
+          if (typeof innerText === "string") {
+            let recortado = innerText
+              .toUpperCase()
+              .trim()
+              .replace(/t\r\n\s+/g, "");
+            return recortado;
+          }
+        });
+        if (texted.includes("TELEFONO") === true) {
+          this.constructedSearch = texted;
+          dataWorked = wrote.hojaAoA.slice(index + 1);
+          //return setTimeout(() => resolve(dataWorked), 600);
+          return dataWorked;
+        }
+      });
+      //!fin de preba
+      resolve(dataWorked);
+    }).then(dataWorked => this.composeNewObject(dataWorked));
   }
 
   public async constructNewJson(name: string) {
@@ -131,34 +151,33 @@ export class FileCall {
       
       //*version readfile sync
        let data = filesystem.readFileSync(`${dirOutputs}/${name}.txt`, "utf8");
-      let grabado = JSON.stringify(data);
+      let grabado = JSON.parse(data);
       console.log(grabado);
 
-      // let dataWorked: any = [];
-      // grabado.forEach((element: any, index: number) => {
-      //   const texted: any = element.map((innerText: string) => {
-      //     if (typeof innerText === "string") {
-      //       let recortado = innerText
-      //         .toUpperCase()
-      //         .trim()
-      //         .replace(/t\r\n\s+/g, "");
-      //       return recortado;
-      //     }
-      //   });
-      //   if (texted.includes("TELEFONO") === true) {
-      //     this.constructedSearch = texted;
-      //     dataWorked = grabado.slice(index + 1);
-      //     //return setTimeout(() => resolve(dataWorked), 600);
-      //     return dataWorked;
-      //   }
-      // });
-      //resolve(dataWorked);
+      let dataWorked: any = [];
+      grabado.forEach((element: any, index: number) => {
+        const texted: any = element.map((innerText: string) => {
+          if (typeof innerText === "string") {
+            let recortado = innerText
+              .toUpperCase()
+              .trim()
+              .replace(/t\r\n\s+/g, "");
+            return recortado;
+          }
+        });
+        if (texted.includes("TELEFONO") === true) {
+          this.constructedSearch = texted;
+          dataWorked = grabado.slice(index + 1);
+          //return setTimeout(() => resolve(dataWorked), 600);
+          return dataWorked;
+        }
+      });
+      resolve(dataWorked);
     })//.then(dataWorked => this.composeNewObject(dataWorked));
   }
 
   public async composeNewObject(dataWorked: any) {
     setTimeout(() => console.log("Armando json de escritura 🚧"), 200);
-
     return new Promise<object>((resolve, reject) => {
       let nodos: any[] = dataWorked.map((nodo: []) => {
         let xFile = {};
@@ -167,22 +186,21 @@ export class FileCall {
         });
         return xFile;
       });
+      console.log(nodos.slice(0,10))
       //*stream version
       // let myReadStream = filesystem.createReadStream(
       //   `src\\outputs\\${name}.json`
       // );
-      let myWriteStream = filesystem.createWriteStream(
-        `${dirTiras}/streamXXX.json`
-      );
+      // let myWriteStream = filesystem.createWriteStream(
+      //   `${dirTiras}/streamXXX.json`
+      // );
 
-      myWriteStream.write(JSON.stringify(nodos, null, 2));
+     // myWriteStream.write(JSON.stringify(nodos, null, 2));
       //*writeSync version
       // filesystem.writeFileSync(
       //   `src\\tiras\\EXITO2callBack.json`,
       //   JSON.stringify(nodos, null, 2)
       // );
-
-      console.log("grabando nuevo JSON ✍️");
       resolve();
     })//.then(() => this.writeNewExcel());
   }
