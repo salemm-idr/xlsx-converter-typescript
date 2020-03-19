@@ -8,7 +8,7 @@ const app: express.Express = express();
 app.use(
   fileUpload({
     useTempFiles: true,
-    tempFileDir: "/uploads/"
+  //  tempFileDir: "src/uploads"
   })
 );
 app.use(bodyParser.json());
