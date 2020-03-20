@@ -15,7 +15,7 @@ mongoose_1.default
     useUnifiedTopology: true
 })
     .then(function (x) {
-    console.log("Conectado a mongo database \uD83D\uDE80 named: " + x.connections[0].name);
+    console.log("Conectado a mongo database \uD83C\uDFD7 named: " + x.connections[0].name);
 })
     .catch(function (error) {
     console.error("Error conectado con la base Mongo ❌", error);

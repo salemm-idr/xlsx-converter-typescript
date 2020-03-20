@@ -186,7 +186,15 @@ export class FileCall {
         });
         return xFile;
       });
-      Sheet.create({...nodos}).then(()=> console.log("hola bb listo"))
+      nodos.forEach(item => {
+        // const sheet: ISheet= new Sheet({
+        //   name:item.TELEFONO
+        // })
+        // sheet.save()
+        Sheet.create({
+         name: "hola emmanuel"
+        }).then(()=> console.log("hola bb listo"))
+      })
 
       console.log(nodos.slice(0,20))
       
