@@ -3,6 +3,20 @@ import path from "path";
 import Api from "./routes/Api";
 import bodyParser from "body-parser";
 import fileUpload from "express-fileupload";
+import mongoose from "mongoose";
+mongoose
+.connect(
+  "mongodb://localhost/xFileConverter",{
+    useNewUrlParser:true,
+    useUnifiedTopology:true
+  })
+  .then(x => {console.log(
+    `Conectado a mongo database 🏗 named: ${x.connections[0].name}`
+  )
+  })
+  .catch(error => {
+    console.error("Error conectado con la base Mongo ❌", error)
+  })
 const app: express.Express = express();
 //app.use(fileUpload({ debug: true }));
 app.use(

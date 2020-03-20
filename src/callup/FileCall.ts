@@ -2,7 +2,7 @@ import xlsx, { WorkSheet, WorkBook } from "xlsx";
 import filesystem from "fs";
 import fileUpload from "express-fileupload";
 import path from "path";
-import { Writable, WritableOptions, Transform } from "stream";
+import Sheet,{ISheet} from "../models/Sheet" //lleva la interface
 
 type UploadedFile = fileUpload.UploadedFile;
 const directoryPath = path.resolve("src/uploads");
@@ -186,7 +186,10 @@ export class FileCall {
         });
         return xFile;
       });
-      console.log(nodos.slice(0,10))
+      Sheet.create({...nodos}).then(()=> console.log("hola bb listo"))
+
+      console.log(nodos.slice(0,20))
+      
       //*stream version
       // let myReadStream = filesystem.createReadStream(
       //   `src\\outputs\\${name}.json`
