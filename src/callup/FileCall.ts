@@ -1,14 +1,10 @@
 import xlsx, { WorkSheet, WorkBook } from "xlsx";
-import filesystem from "fs";
 import fileUpload from "express-fileupload";
 import path from "path";
-import Sheet,{ISheet} from "../models/Sheet" //lleva la interface
+import Sheet, { ISheet } from "../models/Sheet"; //lleva la interface
 
 type UploadedFile = fileUpload.UploadedFile;
 const directoryPath = path.resolve("src/uploads");
-const dirOutputs = path.resolve("src/arrayof");
-const dirTiras = path.resolve("src/tiras");
-const dirConstruct = path.resolve("src/constructedFile")
 interface toWrite {
   name: string;
   hojaAoA: unknown[];
@@ -23,7 +19,11 @@ export class FileCall {
   }
 
   constructor() {}
- //* mover el arhivo que viene de navegador
+  /**
+   * 
+   * @param xfile objeto del navegador tipo xlsx
+   * @returns xFile.name nombre del archivo
+   */
   public async moveFile(xfile: any | object) {
     return new Promise<string>((resolve, reject) => {
       setTimeout(() => console.log("moviendo archivo"), 200);
@@ -41,7 +41,11 @@ export class FileCall {
       }
     });
   }
-//* leer archivo despues de movido
+  /**
+   * 
+   * @param xfileName nombre del archivo movido a la carpeta uploads
+   * @return promesa WorkBook 
+   */
   public async readFilex(xfileName: string) {
     return new Promise<WorkBook>((resolve, reject) => {
       setTimeout(() => console.log("leyendo el  archivo ✊"), 200);
@@ -55,7 +59,11 @@ export class FileCall {
       } else resolve(workbook);
     });
   }
-//* construye un workseeht de la lectura a AoA(arreglo de arreglos)
+ /**
+  * @param workbook de libreria xlsx archivo convertido para proceso 
+  *   construye un workseeht de la lectura a AoA(arreglo de arreglos)
+  *  @returns promesa de objeto
+  */
   public async constructWorkSheet(workbook: WorkBook) {
     return new Promise<object>((resolve, reject) => {
       setTimeout(() => console.log("construyendo sheet 🕵"), 200);
@@ -71,44 +79,22 @@ export class FileCall {
         let data: (string | number)[] = xlsx.utils.sheet_to_json(worksheet, {
           header: 1
         });
-        //this.constructNewJson(data);
-        // let stream = xlsx.stream.to_json(worksheet, { raw: true });
-        // var conv = new Transform({ writableObjectMode: true });
-        // conv._transform = function(obj, e, cb) {
-        //   cb(null, JSON.stringify(obj, null, 2));
-        // };
-        // let myWriteStream = filesystem.createWriteStream(
-        //   "src\\tiras\\stream.json"
-        // );
-        // stream.pipe(conv);
-        // conv.pipe(myWriteStream);
         toSave.name = tab;
         toSave.hojaAoA = data;
-        //this.writeJsonToFolder(toSave);
         return toSave;
-        //return data;
       });
-       setTimeout(()=> {
-         console.log("termina de construir worksheet ⏬")
+      setTimeout(() => {
+        console.log("termina de construir worksheet ⏬");
         resolve(daFile.shift());
-       },2800) 
-    })
+      }, 2800);
+    });
   }
-
+/**
+ * @param wrote objecto compuesto de nombre y data de la hoja de xlsx
+ * @returns promsa de string 
+ */
   public async writeJsonToFolder(wrote: any) {
     return new Promise<string>((resolve, reject) => {
-      //console.log(wrote,"nombre indefindo")
-       const  writeStreamer = filesystem.createWriteStream(
-       `${dirOutputs}/${wrote.name}.txt`
-      );
-      writeStreamer.write(JSON.stringify(wrote.hojaAoA,null,2))
-      //!problema es la extension no la ruta
-      //todo manejar el aoa sin guardarlo y enviar a manejo por separado
-      // filesystem.writeFileSync(
-      //   `${dirOutputs}/${wrote.name}.json`,
-      //   JSON.stringify(wrote.hojaAoA, null, 2)
-      // );
-      //!esto esta ingresado a prueba
       let dataWorked: any = [];
       wrote.hojaAoA.forEach((element: any, index: number) => {
         const texted: any = element.map((innerText: string) => {
@@ -123,61 +109,22 @@ export class FileCall {
         if (texted.includes("TELEFONO") === true) {
           this.constructedSearch = texted;
           dataWorked = wrote.hojaAoA.slice(index + 1);
-          //return setTimeout(() => resolve(dataWorked), 600);
           return dataWorked;
         }
       });
-      //!fin de preba
-      resolve(dataWorked);
+      setTimeout(() => {
+        console.log("Parametro de header construido ⤴️");
+        resolve(dataWorked);
+      },2700);
     }).then(dataWorked => this.composeNewObject(dataWorked));
   }
-
-  public async constructNewJson(name: string) {
-    setTimeout(() => console.log("constuyendo nuevo json"), 200);
-    return new Promise((resolve, reject) => {
-      //*version streamer
-      // let myReadStream = filesystem.createReadStream(
-      //   `${dirOutputs}/${name}`
-      // );
-      
-      // let myWriteStream = filesystem.createWriteStream(
-      //   `src\\tiras\\${name}.json`
-      // );
-      // myReadStream.on("data", chunk => {
-      //   let buf = Buffer.from(chunk, "utf-8");
-      //   let grabado = JSON.stringify(buf);
-      //   console.table(grabado.slice(0, 20));
-      // });
-      
-      //*version readfile sync
-       let data = filesystem.readFileSync(`${dirOutputs}/${name}.txt`, "utf8");
-      let grabado = JSON.parse(data);
-      console.log(grabado);
-
-      let dataWorked: any = [];
-      grabado.forEach((element: any, index: number) => {
-        const texted: any = element.map((innerText: string) => {
-          if (typeof innerText === "string") {
-            let recortado = innerText
-              .toUpperCase()
-              .trim()
-              .replace(/t\r\n\s+/g, "");
-            return recortado;
-          }
-        });
-        if (texted.includes("TELEFONO") === true) {
-          this.constructedSearch = texted;
-          dataWorked = grabado.slice(index + 1);
-          //return setTimeout(() => resolve(dataWorked), 600);
-          return dataWorked;
-        }
-      });
-      resolve(dataWorked);
-    })//.then(dataWorked => this.composeNewObject(dataWorked));
-  }
-
+  /**
+   * @param this.constructedSearch es el valor creado del header extraido de el AoA 
+   * para usar como parametro de columnas 
+   * 
+   * @param dataWorked data cruda para construir el json que sera un xlsx
+   */
   public async composeNewObject(dataWorked: any) {
-    setTimeout(() => console.log("Armando json de escritura 🚧"), 200);
     return new Promise<object>((resolve, reject) => {
       let nodos: any[] = dataWorked.map((nodo: []) => {
         let xFile = {};
@@ -187,75 +134,28 @@ export class FileCall {
         return xFile;
       });
       nodos.forEach(item => {
-        // const sheet: ISheet= new Sheet({
-        //   name:item.TELEFONO
-        // })
-        // sheet.save()
-        Sheet.create({
-         name: "hola emmanuel"
-        }).then(()=> console.log("hola bb listo"))
-      })
-
-      console.log(nodos.slice(0,20))
-      
-      //*stream version
-      // let myReadStream = filesystem.createReadStream(
-      //   `src\\outputs\\${name}.json`
-      // );
-      // let myWriteStream = filesystem.createWriteStream(
-      //   `${dirTiras}/streamXXX.json`
-      // );
-
-     // myWriteStream.write(JSON.stringify(nodos, null, 2));
-      //*writeSync version
-      // filesystem.writeFileSync(
-      //   `src\\tiras\\EXITO2callBack.json`,
-      //   JSON.stringify(nodos, null, 2)
-      // );
-      resolve();
-    })//.then(() => this.writeNewExcel());
-  }
-  public async writeNewExcel() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => console.log("Escribe nuevo excel 👷"), 200);
-      let myReadStream = filesystem.createReadStream(
-        `src\\tiras\\streamXXX.json`
-      );
-      let myWriteStream = filesystem.createWriteStream(
-        "src\\constructedFile\\streamExcel.xlsx"
-      );
-      myReadStream.on("data", chunk => {
-        console.log("si esta trabajando el streamer read");
+        const sheet: ISheet = new Sheet({
+          item
+        });
+        sheet.save();
       });
-      /**crea el libro de trabajo */
-      const wb: WorkBook = xlsx.utils.book_new();
-      /**nombre de la hoja string */
-      const ws_name = "transformed";
-      /**crea la hoja de trabajo */
-      // let ws: WorkSheet = xlsx.stream.to_json();
-      /**junta el libro creado con la hoja  */
-      // xlsx.utils.book_append_sheet(wb, ws, ws_name);
-      /**escribe el libro en la ruta especifica */
-      //xlsx.writeFile(wb, "src\\constructedFile\\streamer.xlsx");
-
-      resolve();
-    }); //.then(res => console.log("Todo se ha guarado con exito 🙉 🙈 🙊"));
+      setTimeout(() => {
+        console.log("Armando json de escritura y guardando a la base 🚧")
+        resolve();
+      },2600)   
+    });
   }
-
-  //todo Eliminar las conexion de la lectura
-  //todo agregar los nuevos paths para la escritura del json
-  //todo mejorar la sintaxis de las variables
-  //todo intentar escribir despues de eso el excel con el streamer del xlsx
-  //todo intentar escribir el excel con el streamer de node
-  //todo hacer refactor del codigo y dejaro mas limpio
-  //todo comentar las funciones y sintantic
+  /**
+   * 
+   * @param name nombre del archivo que inicia la funcion que llama a las principales
+   * viene de el archivo de la funcion
+   * @class Converter del archivo ./controller/converter
+   * 
+   */
   public async doitAll(name: string) {
     const filex: WorkBook = <WorkBook>await this.readFilex(name);
     const constructedWorkSheet: object = await this.constructWorkSheet(filex);
     const writeJson = await this.writeJsonToFolder(constructedWorkSheet);
-    //const readJson = await this.readJsonFromFolder(writeJson);
-    //const newTable = await this.constructNewJson(writeJson);
-    //const newObject = await this.composeNewObject(newTable);
-    //const newExcel = await this.writeNewExcel();
+    return [filex,constructedWorkSheet,writeJson]
   }
 }

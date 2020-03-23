@@ -1,10 +1,9 @@
 import mongoose, {  Schema,Document, Model } from 'mongoose';
-
 export interface ISheet extends Document{
-name:string
+  item:object
 }
 const SheetSchema:Schema = new Schema({
-name:{type:String}
-})
+item:Schema.Types.Mixed
+},{strict:false})
 //* Export the model and return your IUser interface
 export default mongoose.model<ISheet>("Sheet",SheetSchema)
