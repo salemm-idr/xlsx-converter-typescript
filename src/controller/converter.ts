@@ -13,8 +13,11 @@ export class Converter {
     try {
       const xfile = req.files;
       const Xfile = new FileCall();
-      Xfile.moveFile(xfile).then((xfileName: string) => {
-        Xfile.doitAll(xfileName);
+      Xfile.moveFile(xfile)
+      .then((xfileName: string) => {
+        Xfile.doitAll(xfileName)
+        .then( res => console.log(res))
+        .catch(err => console.log(err))
       });
     } catch (error) {
       console.log("Error al mover el archivo ❌");
