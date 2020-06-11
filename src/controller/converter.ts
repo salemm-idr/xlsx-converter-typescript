@@ -20,8 +20,8 @@ export class Converter {
         .catch(err => console.log(err))
       });
     } catch (error) {
-      console.log("Error al mover el archivo ❌");
       res.status(400).json({ message: "Error moviendo el archivo ❌", error });
+      throw new Error(`Error al mover el archivo ❌ ${error}`)
     }
   }
 
