@@ -2,7 +2,7 @@ import xlsx, { WorkSheet, WorkBook } from "xlsx";
 import fileUpload from "express-fileupload";
 import path from "path";
 import Sheet, { ISheet } from "../models/Sheet"; //lleva la interface
-import fs from "fs";
+import fs, { exists } from "fs";
 type UploadedFile = fileUpload.UploadedFile;
 const directoryPath = path.resolve("src/uploads");
 interface toWrite {
@@ -145,6 +145,9 @@ export class FileCall {
         });
         return xFile;
       });
+      //guarda el objeto compuesto a una carpeta
+      //fs.writeFileSync("src/superjson/zord.json",JSON.stringify(nodos))
+
       //console.log("nuevos nodos", nodos.slice(0,5))
       nodos.forEach((item) => {
         const sheet: ISheet = new Sheet({
@@ -156,37 +159,30 @@ export class FileCall {
         console.log("Armando json de escritura y guardando a la base 🚧");
         resolve();
       }, (process.exit(0), 2600));
-    });
+    }).then((res) => process.exit(0));
   }
 
-  public createHeader(worksheet: WorkSheet) {
+  public async createHeader(worksheet: WorkSheet) {
     //!test
-    let hd = xlsx.utils.sheet_to_csv(worksheet);
-    let hd2 = xlsx.utils.sheet_to_json(worksheet);
-     console.log(hd2.slice(0,20))
-    //console.log(hd.slice(0,500))
-    //fs.writeFileSync("src/arrayof/test6.cvs",JSON.stringify(hd.slice(0,500)))
- /*    let superString = hd.slice(0,500).toUpperCase().trim().replace(/t\r\n\s+/g, "")
-    let n = superString.indexOf("TELEFONO")
-    if(superString.includes("TELEFONO")=== true){
-        console.log(superString.substr(0,n))
-    } */
-    //let seccion = hd.slice(0, 10);
-    //console.log(seccion)
-  /*   seccion.map((row: any, i: number) => {
+    //let hd = xlsx.utils.sheet_to_csv(worksheet);
+    let hd2 = xlsx.utils.sheet_to_json(worksheet,{header:1});
+    let seccion = hd2.slice(0, 20);
+    //console.log(seccion);
+    let keys = [];
+    let zFiles = {};
+
+
+     const pre:any = seccion.map((row:any) =>{
       if (row.length <= 9) {
         this.header = [...this.header, row];
-        console.log(this.header,"construido")
-        fs.writeFileSync("src/arrayof/test5.js",JSON.stringify(this.header))
+        console.log(this.header, "header construido");
+        fs.writeFileSync("src/headers/test1.js", JSON.stringify(this.header)); 
       }
-    }); */
-    this.workis()
-    //!test
+      }) 
   }
-  public workis(){
-    this.header.map((item:any) => {
-      console.log(item.from())
-    })
+
+  public workis() {
+   
   }
   /**
    *
@@ -199,6 +195,7 @@ export class FileCall {
     const filex: WorkBook = <WorkBook>await this.readFilex(name);
     const constructedWorkSheet: object = await this.constructWorkSheet(filex);
     const writeJson = await this.writeJsonToFolder(constructedWorkSheet);
+    //const writeHeader = await this.createHeader(constructedWorkSheet);
     return [filex, constructedWorkSheet, writeJson];
   }
 }
