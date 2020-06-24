@@ -3,4 +3,8 @@ node_modules
 # constructedFile
 # tiras
 # uploads
-/src/uploads
+src/uploads
+#extracto de caratulas
+src/headers
+#json de tratamiento de xlsx
+src/superjson

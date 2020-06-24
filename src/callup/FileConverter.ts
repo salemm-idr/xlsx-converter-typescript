@@ -13,7 +13,7 @@ interface toWrite {
 }
 export class FileConverter {
   constructedSearch: [] = [];
-  header: (string | number | undefined)[] = [];
+  header:[][]= [];
   //header:[]=[];
   dataworked:[]=[]
   workbook:any
@@ -83,15 +83,9 @@ public async  constructWorkSheet(workbook:WorkBook){
         let toSave = {} as toWrite;
         worksheet = workbook.Sheets[tab];
         console.log(tab, "nombre de la tabla individual 🚀");
-        //* llama nueva funcion
-        //! this.createHeader(worksheet);
-        //! eleva el worksheet a variable para uso global 
-        this.workSheet = worksheet
-        //this.createHeader(worksheet);
-        //* sin azincronia
         let data: (string | number)[] = xlsx.utils.sheet_to_json(worksheet, {
           header: 1,
-        });
+        });      
         toSave.name = tab;
         toSave.hojaAoA = data;
         return toSave;
@@ -99,9 +93,10 @@ public async  constructWorkSheet(workbook:WorkBook){
       setTimeout(() => {
         console.log("termina de construir worksheet ⏬ estableciendo llaves");
         resolve(daFile.shift());
+        this.workSheet = worksheet
       }, 1600);
     })
-   // .then(fileObj => this.writeJsonToFolder(fileObj))
+   
     
 }
  
@@ -156,8 +151,9 @@ public async composeObject(dataWorked:any){
   })
   .then((nodos)=> {
     console.log("datos guardados");
-     fs.writeFileSync("src/superjson/zordTest05.json",JSON.stringify(nodos,null,2),{flag:"a+"})
+     fs.writeFileSync("src/superjson/zordTest08.json",JSON.stringify(nodos,null,2),{flag:"a+"})
   })
+  .then(()=> this.createHeader())
   .catch((error) => console.log(`No se puede mapear el dataworked ${error}`)) 
 }
 
@@ -174,23 +170,46 @@ public async composeObject(dataWorked:any){
    
   }
 
-  public createHeader(){
-    console.log("en create header")
-
-   /*  let hd2 = xlsx.utils.sheet_to_json(this.workSheet, { header: 1 });
-    let seccion = hd2.slice(0, 20);
-    return new Promise((resolve, reject) => {
-      const pre: any = seccion.map((row: any) => {
+  public async createHeader(){
+      return new Promise((resolve, reject) => {
+    let faceKey:(string)[] = []
+    let hd2:[][] = xlsx.utils.sheet_to_json(this.workSheet, { header: 1 });
+    let seccion:[][] = hd2.slice(0, 20);
+     seccion.map((row) => {
         if (row.length <= 9) {
           this.header = [...this.header, row];
-          fs.writeFileSync("src/headers/test4.js", JSON.stringify(this.header));
-        }else reject()
+        }
       });
+
+      this.header.reduce((acc:[][],currValue:[]) => {
+        return acc.concat(currValue)
+      },[])
+      .filter(Boolean)
+      .map(item => {
+        let tag = item.toString().trim().toUpperCase().split(":")
+        //console.log(tag)
+        tag.forEach((tag:(string)) =>{
+           if(tag === "NOMBRE") return faceKey=[...faceKey,tag]
+        if(tag === "DIRECCIÓN")return faceKey=[...faceKey,tag]
+        if(tag === "PLATAFORMA")return faceKey=[...faceKey,tag]
+        if(tag === "FECHA ACTIVACIÓN") return faceKey=[...faceKey,tag]
+        if(tag === "IMSI")return faceKey=[...faceKey,tag]
+        if(tag.includes("LÍNEA")===true){
+         let splited = tag.split(' ')
+         return faceKey=[...faceKey,splited[0]]
+        }
+        })
+      })
+
+      console.log(faceKey,"final fantasy")
+
+      resolve(this.header)
       setTimeout(()=>{
         console.log("Creando el header de Caratula 📂")
           resolve()
       },2800)
-    }) */
+    }).then((header)=>  fs.writeFileSync("src/headers/test07.js", JSON.stringify(header,null,2))
+    )
   }
 
 } // fin de la clase 
