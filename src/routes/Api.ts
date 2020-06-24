@@ -5,6 +5,5 @@ import { ConverterRoutes } from "./converter.route";
 export default class Api {
   public static initialize(app: express.Application): void {
     app.use("/api/convert", new ConverterRoutes().routes);
-    app.use("/api/convert", new ConverterRoutes().routes);
   }
 }
