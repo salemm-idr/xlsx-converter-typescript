@@ -28,11 +28,12 @@ export class FileConverter {
   constructor(xlsxFile:any) {
   this.xlsxFile = xlsxFile
   }
+
   /**
-   *
    * @param xlsx objeto del navegador tipo xlsx
    * @returns xFile.name nombre del archivo
    */
+
   public async moveFile (){
   return   new Promise<string>((resolve,reject)=>{
       console.log(this.xlsxFile)
@@ -47,10 +48,13 @@ export class FileConverter {
         },1000)}
       });
     })
-    /* .then((xfileName:string) => this.readFilex(xfileName))
-    .catch((error)=> console.error(error)) */
-
 }
+
+/**
+ * @parm xfileName target the file name and us it for check acces on fs 
+ * @var workbook  read the file xlsx and save it to the top level 
+ * 
+ */
 public async readFilex(xfileName:string){
  return new Promise<WorkBook>((resolve,reject)=>{
     const exist = fs.existsSync(`${directoryPath}/${xfileName}`);
@@ -73,6 +77,11 @@ public async readFilex(xfileName:string){
   /* .then(workbook => this.constructWorkSheet(workbook)) */
   
 }
+/**
+ * 
+ * @param workbook came from await converter call equivalet to xlsx file ready to being treated 
+ * @var worksheet  store one tab at the time from the xlsx
+ */
 
 public async  constructWorkSheet(workbook:WorkBook){
     return new Promise<toWrite>((resolve,reject)=>{
@@ -99,6 +108,14 @@ public async  constructWorkSheet(workbook:WorkBook){
    
     
 }
+
+/**
+ * 
+ * @param wrote contain all the data from the xlsx in a better formar to javascript proccessing
+ * @function jsonTreatment extract from AoA (Array of Arrays) and pass for string proccess
+ * @var dataworked grep all the info from being apart 
+ * @this constructedSearch save the piece of code who be the part for construct new object
+ */
  
 public async jsonTreatment(wrote:toWrite){
   return new Promise<(string|number|boolean)[]>((resolve,reject)=>{
@@ -135,7 +152,14 @@ public async jsonTreatment(wrote:toWrite){
   
   .catch((error) => console.log(`No se ha podido leer el parametro de busqueda${error}`)) 
 }
-  
+  /**
+   * 
+   * @param dataWorked ready for being proccessig searching for a doble nested array and make a fusion to consruct new object
+   * @var nodos now carry on all the merged JSON with columns an row from the xlsx depurated and clean
+   * @resolve nodos to return the Promise with the new json 
+   * @then take the las resolve JSON an write to fs the new object 
+   * @then this.createHeader call for the function 
+   */
 public async composeObject(dataWorked:any){
    return new Promise<object>((resolve,reject)=>{
     let nodos:{} =  dataWorked.map((nodo:[]) => {
@@ -156,6 +180,10 @@ public async composeObject(dataWorked:any){
   .then(()=> this.createHeader())
   .catch((error) => console.log(`No se puede mapear el dataworked ${error}`)) 
 }
+/**
+ * 
+ * @param nodos came from promes of composeObject ready to grep an save to the database
+ */
 
   public async writeTodb(nodos:any){
     //fs.writeFileSync("src/superjson/zordTest02.json",JSON.stringify(nodos,null,2))
@@ -170,6 +198,14 @@ public async composeObject(dataWorked:any){
    
   }
 
+  /**
+   * @var faceKey contain a new array of strings extracted for the previous xlsx createing a header for a better search and data manipulation
+   * @var hd2 treat @var worksheet createing a new AoA(Array of Arrays)
+   * @var seccion extract just the first 20 ocurence for the xlsx  map it and fill the @this.header
+   * @this header finally being proccess with tge triforce .reduce().filter().map() for search keywords
+   * @resolve to exit promes
+   * @then write the new file in one array with keywords
+   */
   public async createHeader(){
       return new Promise((resolve, reject) => {
     let faceKey:(string)[] = []
@@ -212,6 +248,5 @@ public async composeObject(dataWorked:any){
     )
   }
 
-} // fin de la clase 
- //todo resolver el tipo de datos para pasar al metodo de guardado de objeto
+} //end of class
 

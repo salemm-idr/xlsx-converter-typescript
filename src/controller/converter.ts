@@ -3,7 +3,9 @@ import { FileConverter } from "../callup/FileConverter";
 
 /**
  * *realize all the engine of endpoint  with the information
- * TODO revisar la asincronia revisar si se debe crear una nueva serie de clase para los metodos y que devuelvan un valor
+ * @class FileConverter extract xlsx info and construct s json with information
+ * @class Converter call class File converter and take node request
+ * @public convert make the calls over @function and wait for the result to go on to the next one
  */
 
 export class Converter {
