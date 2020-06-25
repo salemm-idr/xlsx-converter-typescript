@@ -38,7 +38,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var FileConverter_1 = require("../callup/FileConverter");
 /**
  * *realize all the engine of endpoint  with the information
- * TODO revisar la asincronia revisar si se debe crear una nueva serie de clase para los metodos y que devuelvan un valor
+ * @class FileConverter extract xlsx info and construct s json with information
+ * @class Converter call class File converter and take node request
+ * @public convert make the calls over @function and wait for the result to go on to the next one
  */
 var Converter = /** @class */ (function () {
     function Converter() {
@@ -49,7 +51,7 @@ var Converter = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 5, , 6]);
+                        _a.trys.push([0, 6, , 7]);
                         xfile = req.files;
                         Xfile = new FileConverter_1.FileConverter(xfile);
                         return [4 /*yield*/, Xfile.moveFile()];
@@ -64,39 +66,34 @@ var Converter = /** @class */ (function () {
                         return [4 /*yield*/, Xfile.jsonTreatment(construct)];
                     case 4:
                         _a.sent();
-                        // const composeObj    = await Xfile.composeObject(jsontreatmen)
-                        // const createHeader  = await Xfile.createHeader()
-                        /*  .then(resp => res.status(200).json({message:"converter!! 😱"}))
-                         .catch(error => console.error(error))  */
-                        //Promise.all([mov]).then(res => console.log("Todo ha terminado"))
-                        //await  Xfile.moveFile(xfile)
-                        /* .then(resp => res.status(200).json({message:"Se ha creado un json con la informacion y  construido un header 🐴 ", info:resp}))
-                        .catch(err => res.status(400).json({message:`algo ha salido mal${err}`})) */
-                        /*  .then((xfileName:any) => {
-                           Xfile.doitAll(xfileName)
-                           .then( reson => res.status(200).json({reson}))
-                           .catch(err => console.log(err))
-                         }) */
-                        Promise.all([
-                            moveFile,
-                            readfile,
-                            construct,
-                        ]).then(function (_a) {
+                        //const header = 
+                        return [4 /*yield*/, Xfile.createHeader()];
+                    case 5:
+                        //const header = 
+                        _a.sent();
+                        Promise.all([moveFile, readfile, construct])
+                            .then(function (_a) {
                             var moveFile = _a[0], readfile = _a[1], construct = _a[2];
-                            return res.status(200).json({
-                                moveFile: moveFile,
-                                readfile: readfile,
-                                construct: construct,
+                            return res.status(200).json({ message: "Json saved successfully"
+                                // moveFile,
+                                // readfile,
+                                // construct,
                             });
                         })
-                            .catch(function (error) { return res.status(400).json({ message: "Un error en las acciones no ha dejado continuar " + error }); });
-                        return [3 /*break*/, 6];
-                    case 5:
+                            .catch(function (error) {
+                            return res
+                                .status(400)
+                                .json({
+                                message: "Un error en las acciones no ha dejado continuar " + error,
+                            });
+                        });
+                        return [3 /*break*/, 7];
+                    case 6:
                         error_1 = _a.sent();
                         res.status(400).json({ message: "Error moviendo el archivo ❌", error: error_1 });
                         console.log("Error al mover el archivo \u274C " + error_1);
                         throw new Error("Error al mover el archivo \u274C " + error_1);
-                    case 6: return [2 /*return*/];
+                    case 7: return [2 /*return*/];
                 }
             });
         });
@@ -104,4 +101,4 @@ var Converter = /** @class */ (function () {
     return Converter;
 }());
 exports.Converter = Converter;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY29udmVydGVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL2NvbnRyb2xsZXIvY29udmVydGVyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFDQSx5REFBd0Q7QUFLeEQ7OztHQUdHO0FBRUg7SUFDRTtJQUFlLENBQUM7SUFDSCwyQkFBTyxHQUFwQixVQUFxQixHQUFZLEVBQUUsR0FBYTs7Ozs7Ozt3QkFFdEMsS0FBSyxHQUFHLEdBQUcsQ0FBQyxLQUFLLENBQUM7d0JBQ2xCLEtBQUssR0FBRyxJQUFJLDZCQUFhLENBQUMsS0FBSyxDQUFDLENBQUE7d0JBQ2hCLHFCQUFNLEtBQUssQ0FBQyxRQUFRLEVBQUUsRUFBQTs7d0JBQXRDLFFBQVEsR0FBUSxTQUFzQjt3QkFDdEIscUJBQU0sS0FBSyxDQUFDLFNBQVMsQ0FBQyxRQUFRLENBQUMsRUFBQTs7d0JBQS9DLFFBQVEsR0FBUSxTQUErQjt3QkFDL0IscUJBQU0sS0FBSyxDQUFDLGtCQUFrQixDQUFDLFFBQVEsQ0FBQyxFQUFBOzt3QkFBeEQsU0FBUyxHQUFPLFNBQXdDO3dCQUN4QyxxQkFBTSxLQUFLLENBQUMsYUFBYSxDQUFDLFNBQVMsQ0FBQyxFQUFBOzt3QkFBcEMsU0FBb0MsQ0FBQzt3QkFDNUQsZ0VBQWdFO3dCQUNoRSxtREFBbUQ7d0JBQ3BEO2tFQUMwQzt3QkFDeEMsa0VBQWtFO3dCQUNsRSw4QkFBOEI7d0JBQzlCO29HQUM0RTt3QkFDN0U7Ozs7OEJBSU07d0JBQ0wsT0FBTyxDQUFDLEdBQUcsQ0FBQzs0QkFDVixRQUFROzRCQUNSLFFBQVE7NEJBQ1IsU0FBUzt5QkFHVixDQUFDLENBQUMsSUFBSSxDQUFDLFVBQUMsRUFLTjtnQ0FKRCxnQkFBUSxFQUNSLGdCQUFRLEVBQ1IsaUJBQVM7NEJBRUgsT0FBQSxHQUFHLENBQUMsTUFBTSxDQUFDLEdBQUcsQ0FBQyxDQUFDLElBQUksQ0FBQztnQ0FDekIsUUFBUSxVQUFBO2dDQUNSLFFBQVEsVUFBQTtnQ0FDUixTQUFTLFdBQUE7NkJBR1YsQ0FBQzt3QkFOSSxDQU1KLENBQUM7NkJBQ0YsS0FBSyxDQUFDLFVBQUEsS0FBSyxJQUFJLE9BQUEsR0FBRyxDQUFDLE1BQU0sQ0FBQyxHQUFHLENBQUMsQ0FBQyxJQUFJLENBQUMsRUFBQyxPQUFPLEVBQUMscURBQW1ELEtBQU8sRUFBQyxDQUFDLEVBQTFGLENBQTBGLENBQUMsQ0FBQTs7Ozt3QkFFN0csR0FBRyxDQUFDLE1BQU0sQ0FBQyxHQUFHLENBQUMsQ0FBQyxJQUFJLENBQUMsRUFBRSxPQUFPLEVBQUUsNkJBQTZCLEVBQUUsS0FBSyxTQUFBLEVBQUUsQ0FBQyxDQUFDO3dCQUN4RSxPQUFPLENBQUMsR0FBRyxDQUFDLHNDQUErQixPQUFPLENBQUMsQ0FBQTt3QkFDbkQsTUFBTSxJQUFJLEtBQUssQ0FBQyxzQ0FBK0IsT0FBTyxDQUFDLENBQUE7Ozs7O0tBRTFEO0lBVUgsZ0JBQUM7QUFBRCxDQUFDLEFBekRELElBeURDO0FBekRZLDhCQUFTIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY29udmVydGVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL2NvbnRyb2xsZXIvY29udmVydGVyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFDQSx5REFBd0Q7QUFFeEQ7Ozs7O0dBS0c7QUFFSDtJQUNFO0lBQWUsQ0FBQztJQUNILDJCQUFPLEdBQXBCLFVBQXFCLEdBQVksRUFBRSxHQUFhOzs7Ozs7O3dCQUV0QyxLQUFLLEdBQUcsR0FBRyxDQUFDLEtBQUssQ0FBQzt3QkFDbEIsS0FBSyxHQUFHLElBQUksNkJBQWEsQ0FBQyxLQUFLLENBQUMsQ0FBQzt3QkFDdEIscUJBQU0sS0FBSyxDQUFDLFFBQVEsRUFBRSxFQUFBOzt3QkFBakMsUUFBUSxHQUFHLFNBQXNCO3dCQUN0QixxQkFBTSxLQUFLLENBQUMsU0FBUyxDQUFDLFFBQVEsQ0FBQyxFQUFBOzt3QkFBMUMsUUFBUSxHQUFHLFNBQStCO3dCQUM5QixxQkFBTSxLQUFLLENBQUMsa0JBQWtCLENBQUMsUUFBUSxDQUFDLEVBQUE7O3dCQUFwRCxTQUFTLEdBQUcsU0FBd0M7d0JBQzFELHFCQUFNLEtBQUssQ0FBQyxhQUFhLENBQUMsU0FBUyxDQUFDLEVBQUE7O3dCQUFwQyxTQUFvQyxDQUFDO3dCQUNyQyxpQkFBaUI7d0JBQ2pCLHFCQUFNLEtBQUssQ0FBQyxZQUFZLEVBQUUsRUFBQTs7d0JBRDFCLGlCQUFpQjt3QkFDakIsU0FBMEIsQ0FBQTt3QkFDMUIsT0FBTyxDQUFDLEdBQUcsQ0FBQyxDQUFDLFFBQVEsRUFBRSxRQUFRLEVBQUUsU0FBUyxDQUFDLENBQUM7NkJBQ3pDLElBQUksQ0FBQyxVQUFDLEVBQStCO2dDQUE5QixnQkFBUSxFQUFFLGdCQUFRLEVBQUUsaUJBQVM7NEJBQ25DLE9BQUEsR0FBRyxDQUFDLE1BQU0sQ0FBQyxHQUFHLENBQUMsQ0FBQyxJQUFJLENBQUMsRUFBQyxPQUFPLEVBQUMseUJBQXlCO2dDQUNyRCxZQUFZO2dDQUNaLFlBQVk7Z0NBQ1osYUFBYTs2QkFDZCxDQUFDO3dCQUpGLENBSUUsQ0FDSDs2QkFDQSxLQUFLLENBQUMsVUFBQyxLQUFLOzRCQUNYLE9BQUEsR0FBRztpQ0FDQSxNQUFNLENBQUMsR0FBRyxDQUFDO2lDQUNYLElBQUksQ0FBQztnQ0FDSixPQUFPLEVBQUUscURBQW1ELEtBQU87NkJBQ3BFLENBQUM7d0JBSkosQ0FJSSxDQUNMLENBQUM7Ozs7d0JBRUosR0FBRyxDQUFDLE1BQU0sQ0FBQyxHQUFHLENBQUMsQ0FBQyxJQUFJLENBQUMsRUFBRSxPQUFPLEVBQUUsNkJBQTZCLEVBQUUsS0FBSyxTQUFBLEVBQUUsQ0FBQyxDQUFDO3dCQUN4RSxPQUFPLENBQUMsR0FBRyxDQUFDLHNDQUErQixPQUFPLENBQUMsQ0FBQzt3QkFDcEQsTUFBTSxJQUFJLEtBQUssQ0FBQyxzQ0FBK0IsT0FBTyxDQUFDLENBQUM7Ozs7O0tBRTNEO0lBQ0gsZ0JBQUM7QUFBRCxDQUFDLEFBakNELElBaUNDO0FBakNZLDhCQUFTIn0=
