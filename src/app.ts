@@ -6,7 +6,7 @@ import fileUpload from "express-fileupload";
 import mongoose from "mongoose";
 mongoose
 .connect(
-  "mongodb://<dbuser>:<dbpassword>@ds023603.mlab.com:23603/caska-db",{
+  "mongodb://salemm:salemm2018@ds023603.mlab.com:23603/caska-db",{
     useNewUrlParser:true,
     useUnifiedTopology:true
   })
