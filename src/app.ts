@@ -46,6 +46,6 @@ Api.initialize(app);
 
 app.use(express.static(path.join(__dirname, "dist")));
 
-app.listen(4200, () => {
+app.listen(process.env.PORT, () => {
   console.log(`ready for action on port 4200  🚀 🔥`);
 });
