@@ -189,11 +189,11 @@ public async composeObject(dataWorked:any){
     //fs.writeFileSync("src/superjson/zordTest02.json",JSON.stringify(nodos,null,2))
     console.log(Object.keys(nodos).length)
     return new Promise((resolve,reject) =>{
-        nodos.forEach((item:object) => {
+   /*      nodos.forEach((item:object) => {
          const sheet =   Sheet.create({item});
          //sheet.save(); // este guarda a la base 
        }); 
-       resolve()
+       resolve() */
     }).then(()=> console.log("Guardado a la base listo ✅"))
    
   }
