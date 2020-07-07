@@ -30,6 +30,6 @@ location:{type:LOCATION},
 createdAt:{type:Date}
 },{strict:false})
 //* Export the model and return your IUser interface
-export default mongoose.model<ISheet>("Sheet",SheetSchema)
+export default mongoose.model("Sheet",SheetSchema)
 
 

@@ -10,23 +10,22 @@ import { FileConverter } from "../callup/FileConverter";
 
 export class Converter {
   constructor() {}
+
   public async convert(req: Request, res: Response) {
+    const xfile = req.files;
+    const Xfile = new FileConverter(xfile);
+    const moveFile = await Xfile.moveFile();
+    const readfile = await Xfile.readFilex(moveFile);
+    const construct = await Xfile.constructWorkSheet(readfile);
+    const nodos =  await Xfile.jsonTreatment(construct);
+    const compose  = await Xfile.composeObject(nodos)
+    const nuObj = await Xfile.createHeader();
     try {
-      const xfile = req.files;
-      const Xfile = new FileConverter(xfile);
-      const moveFile = await Xfile.moveFile();
-      const readfile = await Xfile.readFilex(moveFile);
-      const construct = await Xfile.constructWorkSheet(readfile);
-      await Xfile.jsonTreatment(construct);
-      //const header = 
-      await Xfile.createHeader()
-      Promise.all([moveFile, readfile, construct])
-        .then(([moveFile, readfile, construct]) =>
-          res.status(200).json({message:`Json saved successfully`
-            // moveFile,
-            // readfile,
-            // construct,
-          })
+   const resultado = await Promise.all([moveFile, readfile, construct,nodos,compose,nuObj])
+        .then((ros) =>
+          res
+          .status(200)
+          .json({fileMoved:moveFile,message:`Json saved successfully${ros}`})
         )
         .catch((error) =>
           res
@@ -34,7 +33,8 @@ export class Converter {
             .json({
               message: `Un error en las acciones no ha dejado continuar ${error}`,
             })
-        );
+        );   
+        console.log(resultado)
     } catch (error) {
       res.status(400).json({ message: "Error moviendo el archivo ❌", error });
       console.log(`Error al mover el archivo ❌ ${error}`);

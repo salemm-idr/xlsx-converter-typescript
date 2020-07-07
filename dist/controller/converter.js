@@ -47,11 +47,10 @@ var Converter = /** @class */ (function () {
     }
     Converter.prototype.convert = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var xfile, Xfile, moveFile, readfile, construct, error_1;
+            var xfile, Xfile, moveFile, readfile, construct, nodos, compose, nuObj, resultado, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 6, , 7]);
                         xfile = req.files;
                         Xfile = new FileConverter_1.FileConverter(xfile);
                         return [4 /*yield*/, Xfile.moveFile()];
@@ -65,35 +64,39 @@ var Converter = /** @class */ (function () {
                         construct = _a.sent();
                         return [4 /*yield*/, Xfile.jsonTreatment(construct)];
                     case 4:
-                        _a.sent();
-                        //const header = 
-                        return [4 /*yield*/, Xfile.createHeader()];
+                        nodos = _a.sent();
+                        return [4 /*yield*/, Xfile.composeObject(nodos)];
                     case 5:
-                        //const header = 
-                        _a.sent();
-                        Promise.all([moveFile, readfile, construct])
-                            .then(function (_a) {
-                            var moveFile = _a[0], readfile = _a[1], construct = _a[2];
-                            return res.status(200).json({ message: "Json saved successfully"
-                                // moveFile,
-                                // readfile,
-                                // construct,
-                            });
-                        })
-                            .catch(function (error) {
-                            return res
-                                .status(400)
-                                .json({
-                                message: "Un error en las acciones no ha dejado continuar " + error,
-                            });
-                        });
-                        return [3 /*break*/, 7];
+                        compose = _a.sent();
+                        return [4 /*yield*/, Xfile.createHeader()];
                     case 6:
+                        nuObj = _a.sent();
+                        _a.label = 7;
+                    case 7:
+                        _a.trys.push([7, 9, , 10]);
+                        return [4 /*yield*/, Promise.all([moveFile, readfile, construct, nodos, compose, nuObj])
+                                .then(function (ros) {
+                                return res
+                                    .status(200)
+                                    .json({ fileMoved: moveFile, message: "Json saved successfully" + ros });
+                            })
+                                .catch(function (error) {
+                                return res
+                                    .status(400)
+                                    .json({
+                                    message: "Un error en las acciones no ha dejado continuar " + error,
+                                });
+                            })];
+                    case 8:
+                        resultado = _a.sent();
+                        console.log(resultado);
+                        return [3 /*break*/, 10];
+                    case 9:
                         error_1 = _a.sent();
                         res.status(400).json({ message: "Error moviendo el archivo ❌", error: error_1 });
                         console.log("Error al mover el archivo \u274C " + error_1);
                         throw new Error("Error al mover el archivo \u274C " + error_1);
-                    case 7: return [2 /*return*/];
+                    case 10: return [2 /*return*/];
                 }
             });
         });
@@ -101,4 +104,4 @@ var Converter = /** @class */ (function () {
     return Converter;
 }());
 exports.Converter = Converter;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY29udmVydGVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL2NvbnRyb2xsZXIvY29udmVydGVyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFDQSx5REFBd0Q7QUFFeEQ7Ozs7O0dBS0c7QUFFSDtJQUNFO0lBQWUsQ0FBQztJQUNILDJCQUFPLEdBQXBCLFVBQXFCLEdBQVksRUFBRSxHQUFhOzs7Ozs7O3dCQUV0QyxLQUFLLEdBQUcsR0FBRyxDQUFDLEtBQUssQ0FBQzt3QkFDbEIsS0FBSyxHQUFHLElBQUksNkJBQWEsQ0FBQyxLQUFLLENBQUMsQ0FBQzt3QkFDdEIscUJBQU0sS0FBSyxDQUFDLFFBQVEsRUFBRSxFQUFBOzt3QkFBakMsUUFBUSxHQUFHLFNBQXNCO3dCQUN0QixxQkFBTSxLQUFLLENBQUMsU0FBUyxDQUFDLFFBQVEsQ0FBQyxFQUFBOzt3QkFBMUMsUUFBUSxHQUFHLFNBQStCO3dCQUM5QixxQkFBTSxLQUFLLENBQUMsa0JBQWtCLENBQUMsUUFBUSxDQUFDLEVBQUE7O3dCQUFwRCxTQUFTLEdBQUcsU0FBd0M7d0JBQzFELHFCQUFNLEtBQUssQ0FBQyxhQUFhLENBQUMsU0FBUyxDQUFDLEVBQUE7O3dCQUFwQyxTQUFvQyxDQUFDO3dCQUNyQyxpQkFBaUI7d0JBQ2pCLHFCQUFNLEtBQUssQ0FBQyxZQUFZLEVBQUUsRUFBQTs7d0JBRDFCLGlCQUFpQjt3QkFDakIsU0FBMEIsQ0FBQTt3QkFDMUIsT0FBTyxDQUFDLEdBQUcsQ0FBQyxDQUFDLFFBQVEsRUFBRSxRQUFRLEVBQUUsU0FBUyxDQUFDLENBQUM7NkJBQ3pDLElBQUksQ0FBQyxVQUFDLEVBQStCO2dDQUE5QixnQkFBUSxFQUFFLGdCQUFRLEVBQUUsaUJBQVM7NEJBQ25DLE9BQUEsR0FBRyxDQUFDLE1BQU0sQ0FBQyxHQUFHLENBQUMsQ0FBQyxJQUFJLENBQUMsRUFBQyxPQUFPLEVBQUMseUJBQXlCO2dDQUNyRCxZQUFZO2dDQUNaLFlBQVk7Z0NBQ1osYUFBYTs2QkFDZCxDQUFDO3dCQUpGLENBSUUsQ0FDSDs2QkFDQSxLQUFLLENBQUMsVUFBQyxLQUFLOzRCQUNYLE9BQUEsR0FBRztpQ0FDQSxNQUFNLENBQUMsR0FBRyxDQUFDO2lDQUNYLElBQUksQ0FBQztnQ0FDSixPQUFPLEVBQUUscURBQW1ELEtBQU87NkJBQ3BFLENBQUM7d0JBSkosQ0FJSSxDQUNMLENBQUM7Ozs7d0JBRUosR0FBRyxDQUFDLE1BQU0sQ0FBQyxHQUFHLENBQUMsQ0FBQyxJQUFJLENBQUMsRUFBRSxPQUFPLEVBQUUsNkJBQTZCLEVBQUUsS0FBSyxTQUFBLEVBQUUsQ0FBQyxDQUFDO3dCQUN4RSxPQUFPLENBQUMsR0FBRyxDQUFDLHNDQUErQixPQUFPLENBQUMsQ0FBQzt3QkFDcEQsTUFBTSxJQUFJLEtBQUssQ0FBQyxzQ0FBK0IsT0FBTyxDQUFDLENBQUM7Ozs7O0tBRTNEO0lBQ0gsZ0JBQUM7QUFBRCxDQUFDLEFBakNELElBaUNDO0FBakNZLDhCQUFTIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY29udmVydGVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL2NvbnRyb2xsZXIvY29udmVydGVyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFDQSx5REFBd0Q7QUFFeEQ7Ozs7O0dBS0c7QUFFSDtJQUNFO0lBQWUsQ0FBQztJQUVILDJCQUFPLEdBQXBCLFVBQXFCLEdBQVksRUFBRSxHQUFhOzs7Ozs7d0JBQ3hDLEtBQUssR0FBRyxHQUFHLENBQUMsS0FBSyxDQUFDO3dCQUNsQixLQUFLLEdBQUcsSUFBSSw2QkFBYSxDQUFDLEtBQUssQ0FBQyxDQUFDO3dCQUN0QixxQkFBTSxLQUFLLENBQUMsUUFBUSxFQUFFLEVBQUE7O3dCQUFqQyxRQUFRLEdBQUcsU0FBc0I7d0JBQ3RCLHFCQUFNLEtBQUssQ0FBQyxTQUFTLENBQUMsUUFBUSxDQUFDLEVBQUE7O3dCQUExQyxRQUFRLEdBQUcsU0FBK0I7d0JBQzlCLHFCQUFNLEtBQUssQ0FBQyxrQkFBa0IsQ0FBQyxRQUFRLENBQUMsRUFBQTs7d0JBQXBELFNBQVMsR0FBRyxTQUF3Qzt3QkFDM0MscUJBQU0sS0FBSyxDQUFDLGFBQWEsQ0FBQyxTQUFTLENBQUMsRUFBQTs7d0JBQTdDLEtBQUssR0FBSSxTQUFvQzt3QkFDbEMscUJBQU0sS0FBSyxDQUFDLGFBQWEsQ0FBQyxLQUFLLENBQUMsRUFBQTs7d0JBQTNDLE9BQU8sR0FBSSxTQUFnQzt3QkFDbkMscUJBQU0sS0FBSyxDQUFDLFlBQVksRUFBRSxFQUFBOzt3QkFBbEMsS0FBSyxHQUFHLFNBQTBCOzs7O3dCQUV2QixxQkFBTSxPQUFPLENBQUMsR0FBRyxDQUFDLENBQUMsUUFBUSxFQUFFLFFBQVEsRUFBRSxTQUFTLEVBQUMsS0FBSyxFQUFDLE9BQU8sRUFBQyxLQUFLLENBQUMsQ0FBQztpQ0FDbEYsSUFBSSxDQUFDLFVBQUMsR0FBRztnQ0FDUixPQUFBLEdBQUc7cUNBQ0YsTUFBTSxDQUFDLEdBQUcsQ0FBQztxQ0FDWCxJQUFJLENBQUMsRUFBQyxTQUFTLEVBQUMsUUFBUSxFQUFDLE9BQU8sRUFBQyw0QkFBMEIsR0FBSyxFQUFDLENBQUM7NEJBRm5FLENBRW1FLENBQ3BFO2lDQUNBLEtBQUssQ0FBQyxVQUFDLEtBQUs7Z0NBQ1gsT0FBQSxHQUFHO3FDQUNBLE1BQU0sQ0FBQyxHQUFHLENBQUM7cUNBQ1gsSUFBSSxDQUFDO29DQUNKLE9BQU8sRUFBRSxxREFBbUQsS0FBTztpQ0FDcEUsQ0FBQzs0QkFKSixDQUlJLENBQ0wsRUFBQTs7d0JBWkEsU0FBUyxHQUFHLFNBWVo7d0JBQ0QsT0FBTyxDQUFDLEdBQUcsQ0FBQyxTQUFTLENBQUMsQ0FBQTs7Ozt3QkFFeEIsR0FBRyxDQUFDLE1BQU0sQ0FBQyxHQUFHLENBQUMsQ0FBQyxJQUFJLENBQUMsRUFBRSxPQUFPLEVBQUUsNkJBQTZCLEVBQUUsS0FBSyxTQUFBLEVBQUUsQ0FBQyxDQUFDO3dCQUN4RSxPQUFPLENBQUMsR0FBRyxDQUFDLHNDQUErQixPQUFPLENBQUMsQ0FBQzt3QkFDcEQsTUFBTSxJQUFJLEtBQUssQ0FBQyxzQ0FBK0IsT0FBTyxDQUFDLENBQUM7Ozs7O0tBRTNEO0lBQ0gsZ0JBQUM7QUFBRCxDQUFDLEFBakNELElBaUNDO0FBakNZLDhCQUFTIn0=

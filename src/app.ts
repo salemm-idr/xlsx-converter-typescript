@@ -4,10 +4,11 @@ import Api from "./routes/Api";
 import bodyParser from "body-parser";
 import fileUpload from "express-fileupload";
 import mongoose from "mongoose";
+
 // "mongodb://salemm:salemm2019@ds023603.mlab.com:23603/caska-db"
 mongoose
 .connect(
- "mongodb://localhost/xfile",{
+ "mongodb://localhost:27017/xfile",{
     useNewUrlParser:true,
     useUnifiedTopology:true
   })
@@ -47,6 +48,6 @@ Api.initialize(app);
 
 app.use(express.static(path.join(__dirname, "dist")));
 
-app.listen(process.env.PORT, () => {
-  console.log(`ready for action on ${process.env.PORT}  🚀 🔥`);
+app.listen(3000, () => {
+  console.log(`ready for action on 3000 🚀 🔥`);
 });
