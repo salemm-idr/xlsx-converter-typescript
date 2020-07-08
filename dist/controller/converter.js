@@ -47,7 +47,7 @@ var Converter = /** @class */ (function () {
     }
     Converter.prototype.convert = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var xfile, Xfile, moveFile, readfile, construct, nodos, compose, nuObj, resultado, error_1;
+            var xfile, Xfile, moveFile, readfile, construct, nodos, nuObj, resultado, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -65,20 +65,17 @@ var Converter = /** @class */ (function () {
                         return [4 /*yield*/, Xfile.jsonTreatment(construct)];
                     case 4:
                         nodos = _a.sent();
-                        return [4 /*yield*/, Xfile.composeObject(nodos)];
-                    case 5:
-                        compose = _a.sent();
                         return [4 /*yield*/, Xfile.createHeader()];
-                    case 6:
+                    case 5:
                         nuObj = _a.sent();
-                        _a.label = 7;
-                    case 7:
-                        _a.trys.push([7, 9, , 10]);
-                        return [4 /*yield*/, Promise.all([moveFile, readfile, construct, nodos, compose, nuObj])
-                                .then(function (ros) {
+                        _a.label = 6;
+                    case 6:
+                        _a.trys.push([6, 8, , 9]);
+                        return [4 /*yield*/, Promise.all([moveFile, readfile, nodos])
+                                .then(function (results) {
                                 return res
                                     .status(200)
-                                    .json({ fileMoved: moveFile, message: "Json saved successfully" + ros });
+                                    .json({ fileMoved: moveFile, message: "Json saved successfully" });
                             })
                                 .catch(function (error) {
                                 return res
@@ -87,16 +84,16 @@ var Converter = /** @class */ (function () {
                                     message: "Un error en las acciones no ha dejado continuar " + error,
                                 });
                             })];
-                    case 8:
+                    case 7:
                         resultado = _a.sent();
                         console.log(resultado);
-                        return [3 /*break*/, 10];
-                    case 9:
+                        return [3 /*break*/, 9];
+                    case 8:
                         error_1 = _a.sent();
                         res.status(400).json({ message: "Error moviendo el archivo ❌", error: error_1 });
                         console.log("Error al mover el archivo \u274C " + error_1);
                         throw new Error("Error al mover el archivo \u274C " + error_1);
-                    case 10: return [2 /*return*/];
+                    case 9: return [2 /*return*/];
                 }
             });
         });
@@ -104,4 +101,4 @@ var Converter = /** @class */ (function () {
     return Converter;
 }());
 exports.Converter = Converter;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY29udmVydGVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL2NvbnRyb2xsZXIvY29udmVydGVyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFDQSx5REFBd0Q7QUFFeEQ7Ozs7O0dBS0c7QUFFSDtJQUNFO0lBQWUsQ0FBQztJQUVILDJCQUFPLEdBQXBCLFVBQXFCLEdBQVksRUFBRSxHQUFhOzs7Ozs7d0JBQ3hDLEtBQUssR0FBRyxHQUFHLENBQUMsS0FBSyxDQUFDO3dCQUNsQixLQUFLLEdBQUcsSUFBSSw2QkFBYSxDQUFDLEtBQUssQ0FBQyxDQUFDO3dCQUN0QixxQkFBTSxLQUFLLENBQUMsUUFBUSxFQUFFLEVBQUE7O3dCQUFqQyxRQUFRLEdBQUcsU0FBc0I7d0JBQ3RCLHFCQUFNLEtBQUssQ0FBQyxTQUFTLENBQUMsUUFBUSxDQUFDLEVBQUE7O3dCQUExQyxRQUFRLEdBQUcsU0FBK0I7d0JBQzlCLHFCQUFNLEtBQUssQ0FBQyxrQkFBa0IsQ0FBQyxRQUFRLENBQUMsRUFBQTs7d0JBQXBELFNBQVMsR0FBRyxTQUF3Qzt3QkFDM0MscUJBQU0sS0FBSyxDQUFDLGFBQWEsQ0FBQyxTQUFTLENBQUMsRUFBQTs7d0JBQTdDLEtBQUssR0FBSSxTQUFvQzt3QkFDbEMscUJBQU0sS0FBSyxDQUFDLGFBQWEsQ0FBQyxLQUFLLENBQUMsRUFBQTs7d0JBQTNDLE9BQU8sR0FBSSxTQUFnQzt3QkFDbkMscUJBQU0sS0FBSyxDQUFDLFlBQVksRUFBRSxFQUFBOzt3QkFBbEMsS0FBSyxHQUFHLFNBQTBCOzs7O3dCQUV2QixxQkFBTSxPQUFPLENBQUMsR0FBRyxDQUFDLENBQUMsUUFBUSxFQUFFLFFBQVEsRUFBRSxTQUFTLEVBQUMsS0FBSyxFQUFDLE9BQU8sRUFBQyxLQUFLLENBQUMsQ0FBQztpQ0FDbEYsSUFBSSxDQUFDLFVBQUMsR0FBRztnQ0FDUixPQUFBLEdBQUc7cUNBQ0YsTUFBTSxDQUFDLEdBQUcsQ0FBQztxQ0FDWCxJQUFJLENBQUMsRUFBQyxTQUFTLEVBQUMsUUFBUSxFQUFDLE9BQU8sRUFBQyw0QkFBMEIsR0FBSyxFQUFDLENBQUM7NEJBRm5FLENBRW1FLENBQ3BFO2lDQUNBLEtBQUssQ0FBQyxVQUFDLEtBQUs7Z0NBQ1gsT0FBQSxHQUFHO3FDQUNBLE1BQU0sQ0FBQyxHQUFHLENBQUM7cUNBQ1gsSUFBSSxDQUFDO29DQUNKLE9BQU8sRUFBRSxxREFBbUQsS0FBTztpQ0FDcEUsQ0FBQzs0QkFKSixDQUlJLENBQ0wsRUFBQTs7d0JBWkEsU0FBUyxHQUFHLFNBWVo7d0JBQ0QsT0FBTyxDQUFDLEdBQUcsQ0FBQyxTQUFTLENBQUMsQ0FBQTs7Ozt3QkFFeEIsR0FBRyxDQUFDLE1BQU0sQ0FBQyxHQUFHLENBQUMsQ0FBQyxJQUFJLENBQUMsRUFBRSxPQUFPLEVBQUUsNkJBQTZCLEVBQUUsS0FBSyxTQUFBLEVBQUUsQ0FBQyxDQUFDO3dCQUN4RSxPQUFPLENBQUMsR0FBRyxDQUFDLHNDQUErQixPQUFPLENBQUMsQ0FBQzt3QkFDcEQsTUFBTSxJQUFJLEtBQUssQ0FBQyxzQ0FBK0IsT0FBTyxDQUFDLENBQUM7Ozs7O0tBRTNEO0lBQ0gsZ0JBQUM7QUFBRCxDQUFDLEFBakNELElBaUNDO0FBakNZLDhCQUFTIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY29udmVydGVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL2NvbnRyb2xsZXIvY29udmVydGVyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFDQSx5REFBd0Q7QUFFeEQ7Ozs7O0dBS0c7QUFFSDtJQUNFO0lBQWUsQ0FBQztJQUVILDJCQUFPLEdBQXBCLFVBQXFCLEdBQVksRUFBRSxHQUFhOzs7Ozs7d0JBQ3hDLEtBQUssR0FBRyxHQUFHLENBQUMsS0FBSyxDQUFDO3dCQUNsQixLQUFLLEdBQUcsSUFBSSw2QkFBYSxDQUFDLEtBQUssQ0FBQyxDQUFDO3dCQUN0QixxQkFBTSxLQUFLLENBQUMsUUFBUSxFQUFFLEVBQUE7O3dCQUFqQyxRQUFRLEdBQUcsU0FBc0I7d0JBQ3RCLHFCQUFNLEtBQUssQ0FBQyxTQUFTLENBQUMsUUFBUSxDQUFDLEVBQUE7O3dCQUExQyxRQUFRLEdBQUcsU0FBK0I7d0JBQzlCLHFCQUFNLEtBQUssQ0FBQyxrQkFBa0IsQ0FBQyxRQUFRLENBQUMsRUFBQTs7d0JBQXBELFNBQVMsR0FBRyxTQUF3Qzt3QkFDM0MscUJBQU0sS0FBSyxDQUFDLGFBQWEsQ0FBQyxTQUFTLENBQUMsRUFBQTs7d0JBQTdDLEtBQUssR0FBSSxTQUFvQzt3QkFFckMscUJBQU0sS0FBSyxDQUFDLFlBQVksRUFBRSxFQUFBOzt3QkFBbEMsS0FBSyxHQUFHLFNBQTBCOzs7O3dCQUV2QixxQkFBTSxPQUFPLENBQUMsR0FBRyxDQUFDLENBQUMsUUFBUSxFQUFFLFFBQVEsRUFBQyxLQUFLLENBQUMsQ0FBQztpQ0FDekQsSUFBSSxDQUFDLFVBQUMsT0FBTztnQ0FDYixPQUFBLEdBQUc7cUNBQ0gsTUFBTSxDQUFDLEdBQUcsQ0FBQztxQ0FDWCxJQUFJLENBQUMsRUFBQyxTQUFTLEVBQUMsUUFBUSxFQUFDLE9BQU8sRUFBQyx5QkFBeUIsRUFBQyxDQUFDOzRCQUY1RCxDQUU0RCxDQUNoRTtpQ0FDSSxLQUFLLENBQUMsVUFBQyxLQUFLO2dDQUNYLE9BQUEsR0FBRztxQ0FDQSxNQUFNLENBQUMsR0FBRyxDQUFDO3FDQUNYLElBQUksQ0FBQztvQ0FDSixPQUFPLEVBQUUscURBQW1ELEtBQU87aUNBQ3BFLENBQUM7NEJBSkosQ0FJSSxDQUNMLEVBQUE7O3dCQVpBLFNBQVMsR0FBRyxTQVlaO3dCQUNELE9BQU8sQ0FBQyxHQUFHLENBQUMsU0FBUyxDQUFDLENBQUE7Ozs7d0JBRXhCLEdBQUcsQ0FBQyxNQUFNLENBQUMsR0FBRyxDQUFDLENBQUMsSUFBSSxDQUFDLEVBQUUsT0FBTyxFQUFFLDZCQUE2QixFQUFFLEtBQUssU0FBQSxFQUFFLENBQUMsQ0FBQzt3QkFDeEUsT0FBTyxDQUFDLEdBQUcsQ0FBQyxzQ0FBK0IsT0FBTyxDQUFDLENBQUM7d0JBQ3BELE1BQU0sSUFBSSxLQUFLLENBQUMsc0NBQStCLE9BQU8sQ0FBQyxDQUFDOzs7OztLQUUzRDtJQUNILGdCQUFDO0FBQUQsQ0FBQyxBQWpDRCxJQWlDQztBQWpDWSw4QkFBUyJ9

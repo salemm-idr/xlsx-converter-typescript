@@ -1,3 +1,4 @@
+require('dotenv').config()
 import express, { Application } from "express";
 import path from "path";
 import Api from "./routes/Api";
@@ -13,7 +14,7 @@ mongoose
     useUnifiedTopology:true
   })
   .then(x => {console.log(
-    `Conectado a mongo database 🏗 named: ${x.connections[0].name}`
+    `Conectado a mongo database 🔽  named: ${x.connections[0].name}`
   )
   })
   .catch(error => {
@@ -48,6 +49,6 @@ Api.initialize(app);
 
 app.use(express.static(path.join(__dirname, "dist")));
 
-app.listen(3000, () => {
-  console.log(`ready for action on 3000 🚀 🔥`);
+app.listen(process.env.PORT, () => {
+  console.log(`ready for action on ${process.env.PORT} 🚀 🔥`);
 });

@@ -18,15 +18,15 @@ export class Converter {
     const readfile = await Xfile.readFilex(moveFile);
     const construct = await Xfile.constructWorkSheet(readfile);
     const nodos =  await Xfile.jsonTreatment(construct);
-    const compose  = await Xfile.composeObject(nodos)
+    //const compose  = await Xfile.composeObject(nodos)
     const nuObj = await Xfile.createHeader();
     try {
-   const resultado = await Promise.all([moveFile, readfile, construct,nodos,compose,nuObj])
-        .then((ros) =>
-          res
-          .status(200)
-          .json({fileMoved:moveFile,message:`Json saved successfully${ros}`})
-        )
+   const resultado = await Promise.all([moveFile, readfile,nodos])
+        .then((results) =>  
+         res
+        .status(200)
+        .json({fileMoved:moveFile,message:`Json saved successfully`}) 
+    )
         .catch((error) =>
           res
             .status(400)

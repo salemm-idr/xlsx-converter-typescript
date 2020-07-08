@@ -15,12 +15,12 @@ export class FileConverter {
   constructedSearch: [] = [];
   header: [][] = [];
   //header:[]=[];
-  fileJsonName:string = "";
+  fileJsonName: string = "";
   dataworked: [] = [];
   workbook: any;
   workSheet: WorkSheet = Object;
   xlsxFile: any;
-  nodos:[]=[];
+  nodos: [] = [];
   static isUploaded(file: UploadedFile | UploadedFile[]): file is UploadedFile {
     return (
       typeof file === "object" && (file as UploadedFile).name !== undefined
@@ -47,7 +47,7 @@ export class FileConverter {
         } else {
           setTimeout(() => {
             console.log(`Moviendo Archivo! ${file.name} 😮`);
-            this.fileJsonName = file.name
+            this.fileJsonName = file.name;
             resolve(this.fileJsonName);
           }, 1000);
         }
@@ -65,7 +65,7 @@ export class FileConverter {
       const exist = fs.existsSync(`${directoryPath}/${xfileName}`);
       if (!exist) {
         console.log("no existe lo vamos a asignar");
-       this.workbook = xlsx.readFile(`${directoryPath}/${xfileName}`, {
+        this.workbook = xlsx.readFile(`${directoryPath}/${xfileName}`, {
           cellDates: true,
         });
         resolve(this.workbook);
@@ -134,7 +134,7 @@ export class FileConverter {
           }
         });
         if (texted.includes("TELEFONO") === true) {
-          this.constructedSearch = texted
+          this.constructedSearch = texted;
           dataWorked = wrote.hojaAoA.slice(index + 1);
           resolve(wrote.hojaAoA.slice(index + 1));
           return dataWorked;
@@ -145,12 +145,11 @@ export class FileConverter {
       setTimeout(() => {
         console.log("Tratamiento de json terminado 👌 😏");
         resolve(dataWorked);
-      }, 1700);
-    })
-      /* .then((dataworked) => {
-        this.composeObject(dataworked);
-      }) */
-
+      }, 1800);
+    })//promise
+      .then((dataworked) => {
+       this.composeObject(dataworked);
+      })
       .catch((error) =>
         console.log(`No se ha podido leer el parametro de busqueda${error}`)
       );
@@ -172,22 +171,35 @@ export class FileConverter {
         });
         return xFile;
       });
-    
+
       fs.writeFileSync(
         `src/superjson/${this.fileJsonName.split(".")[0]}.json`,
         JSON.stringify(nodos, null, 2),
         { flag: "a+" }
       );
-    
       setTimeout(() => {
-        
-        resolve({nodos,message:console.log("a la verga si funciono")});
+        resolve(nodos);
       }, 2300);
-    })
-      .then(() => { console.log("mierda chingadamadre");this.createHeader()})
-      .catch((error) =>
-        console.log(`No se puede mapear el dataworked ${error}`)
-      );
+    }) 
+         .then(() =>  {
+            setTimeout(()=>{
+              this.createHeader()
+            },2600)
+         })
+        .catch((error) =>
+          console.log(`No se puede mapear el dataworked ${error}`)
+        );
+ 
+    /*   .then((nodos) => {
+        console.log("datos guardados");
+        fs.writeFileSync(
+          "src/superjson/zordTest088.json",
+          JSON.stringify(nodos, null, 2),
+          { flag: "a+" }
+        );
+        
+      }) */
+     
   }
   /**
    * @var faceKey contain a new array of strings extracted for the previous xlsx createing a header for a better search and data manipulation
@@ -198,6 +210,7 @@ export class FileConverter {
    * @then write the new file in one array with keywords
    */
   public async createHeader() {
+    console.log("no llegamos o si ??")
     return new Promise((resolve, reject) => {
       let faceKey: string[] = [];
       let hd2: [][] = xlsx.utils.sheet_to_json(this.workSheet, { header: 1 });
@@ -229,7 +242,6 @@ export class FileConverter {
           });
         });
       console.log(faceKey, "final fantasy");
-
       resolve(this.header);
       setTimeout(() => {
         console.log("Creando el header de Caratula 📂");
@@ -241,11 +253,10 @@ export class FileConverter {
         `src/headers/${this.fileJsonName.split(".")[0]}Header.js`,
         JSON.stringify(header, null, 2)
       );
-      
     });
   }
 
-    /**
+  /**
    *
    * @param nodos came from promes of composeObject ready to grep an save to the database
    */
@@ -254,12 +265,10 @@ export class FileConverter {
     console.log("si llegamos a writeTodb!!!", Object.keys(this.nodos).length);
     return new Promise((resolve, reject) => {
       let pice = this.nodos.slice(0, 10);
-      pice.forEach((item:ISheet)=>{
-        console.log(item,"en la funcion de la cola")
-        const sheet = SingleSheet.create({item:item})
-      }) 
+      pice.forEach((item: ISheet) => {
+        console.log(item, "en la funcion de la cola");
+        const sheet = SingleSheet.create({ item: item });
+      });
     }).then(() => console.log("Guardado a la base listo ✅"));
   }
 } //end of class
-
-
