@@ -3,20 +3,26 @@ import fileUpload from "express-fileupload";
 import path from "path";
 import SingleSheet, { ISheet } from "../models/SingleSheet";
 import Sheet from "../models/Sheet"; //lleva la interface
-import fs from "fs";
+import fs,{promises} from "fs";
 import { Request, Response } from "express";
 type UploadedFile = fileUpload.UploadedFile;
 const directoryPath = path.resolve("src/uploads");
+const jsonPath = path.resolve("src/superjson");
+const headerPath = path.resolve("src/headers");
 interface toWrite {
   name: string;
   hojaAoA: (string | number | boolean)[];
+}
+interface Idata {
+  message: string;
+  payload: any;
 }
 export class FileConverter {
   constructedSearch: [] = [];
   header: [][] = [];
   //header:[]=[];
   fileJsonName: string = "";
-  dataworked: [] = [];
+  dataworked: (string | number | boolean)[] = [];
   workbook: any;
   workSheet: WorkSheet = Object;
   xlsxFile: any;
@@ -37,7 +43,7 @@ export class FileConverter {
    */
 
   public async moveFile() {
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<Idata>((resolve, reject) => {
       console.log(this.xlsxFile);
       const { file } = this.xlsxFile;
       file.mv(`${directoryPath}/${file.name}`, (err: any) => {
@@ -48,7 +54,10 @@ export class FileConverter {
           setTimeout(() => {
             console.log(`Moviendo Archivo! ${file.name} 😮`);
             this.fileJsonName = file.name;
-            resolve(this.fileJsonName);
+            resolve({
+              message: "Moviendo Archivo!",
+              payload: this.fileJsonName,
+            });
           }, 1000);
         }
       });
@@ -61,25 +70,33 @@ export class FileConverter {
    *
    */
   public async readFilex(xfileName: string) {
-    return new Promise<WorkBook>((resolve, reject) => {
+    return new Promise<Idata>((resolve, reject) => {
       const exist = fs.existsSync(`${directoryPath}/${xfileName}`);
-      if (!exist) {
-        console.log("no existe lo vamos a asignar");
+      if (exist) {
+        console.log("no existe lo vamos a asignar ✋");
         this.workbook = xlsx.readFile(`${directoryPath}/${xfileName}`, {
           cellDates: true,
         });
-        resolve(this.workbook);
+        setTimeout(() => {
+          console.log("Leyendo el  archivo ✊ enviando a construir 🚧");
+          resolve({
+            message: "Leyendo el archivo para construir",
+            payload: this.workbook,
+          });
+        }, 1500);
       } else {
         this.workbook = xlsx.readFile(`${directoryPath}/${xfileName}`, {
           cellDates: true,
         });
         setTimeout(() => {
-          console.log("leyendo el  archivo ✊ enviando a construir 🚧");
-          resolve(this.workbook);
-        }, 1300);
+          console.log("Leyendo el  archivo ✊ enviando a construir 🚧");
+          resolve({
+            message: "Leyendo el archivo para construir",
+            payload: this.workbook,
+          });
+        }, 1500);
       }
     });
-    /* .then(workbook => this.constructWorkSheet(workbook)) */
   }
   /**
    *
@@ -88,26 +105,32 @@ export class FileConverter {
    */
 
   public async constructWorkSheet(workbook: WorkBook) {
-    return new Promise<toWrite>((resolve, reject) => {
+    return new Promise<Idata>((resolve, reject) => {
       let tabs: string[] = workbook.SheetNames;
       let worksheet: WorkSheet;
       console.log(tabs, "in filecall 👌");
       let daFile = tabs.map((tab) => {
-        let toSave = {} as toWrite;
+        // let toSave = {} as toWrite;
         worksheet = workbook.Sheets[tab];
         console.log(tab, "nombre de la tabla individual 🚀");
         let data: (string | number)[] = xlsx.utils.sheet_to_json(worksheet, {
-          header: 1,
+          header: 1,blankrows:true,defval:"nodefinida"
         });
-        toSave.name = tab;
+        return data;
+        /*   toSave.name = tab;
         toSave.hojaAoA = data;
-        return toSave;
+        return toSave; 
+        alternative = daFile.shift()
+        */
       });
       setTimeout(() => {
         console.log("termina de construir worksheet ⏬ estableciendo llaves");
-        resolve(daFile.shift());
+        resolve({
+          message: "termina de construir worksheet ⏬ estableciendo llaves",
+          payload: daFile.shift(),
+        });
         this.workSheet = worksheet;
-      }, 1600);
+      }, 2000);
     });
   }
 
@@ -119,40 +142,48 @@ export class FileConverter {
    * @this constructedSearch save the piece of code who be the part for construct new object
    */
 
-  public async jsonTreatment(wrote: toWrite) {
-    return new Promise<(string | number | boolean)[]>((resolve, reject) => {
+  public async jsonTreatment(aoa: []) {
+    //<(string | number | boolean)[]>
+    return new Promise<Idata>((resolve, reject) => {
       let dataWorked: (string | number | boolean)[] = [];
-
-      wrote.hojaAoA.forEach((element: any, index: number) => {
+      aoa.forEach((element: any, index: number) => {
         const texted: any = element.map((innerText: string) => {
           if (typeof innerText === "string") {
             let recortado = innerText
               .toUpperCase()
               .trim()
-              .replace(/t\r\n\s+/g, "");
+              .replace(/[t\n\r\s.,]+/g, '')//.replace(/t[\r\n\s.,]+/g, "");
             return recortado;
           }
         });
         if (texted.includes("TELEFONO") === true) {
           this.constructedSearch = texted;
-          dataWorked = wrote.hojaAoA.slice(index + 1);
-          resolve(wrote.hojaAoA.slice(index + 1));
-          return dataWorked;
+          console.log(this.constructedSearch)
+          this.dataworked = aoa.slice(index + 1);
+          console.log(this.dataworked.slice(0, 1));
+          //resolve(wrote.hojaAoA.slice(index + 1));
+          //return dataWorked;
         } else if (!texted) {
-          reject("no se grabo el arhivo");
+          reject(
+            "La Palabra Telefono o TELEFONO no es lejible en el archivo 😪"
+          );
         }
       });
       setTimeout(() => {
         console.log("Tratamiento de json terminado 👌 😏");
-        resolve(dataWorked);
-      }, 1800);
-    })//promise
-      .then((dataworked) => {
-       this.composeObject(dataworked);
-      })
-      .catch((error) =>
-        console.log(`No se ha podido leer el parametro de busqueda${error}`)
-      );
+        resolve({
+          message: "Tratamiento de json terminado 👌 😏",
+          payload: this.dataworked,
+        });
+      }, 2500);
+    });
+    //promise
+    // .then((dataworked) => {
+    //  this.composeObject(dataworked);
+    // })
+    // .catch((error) =>
+    //   console.log(`No se ha podido leer el parametro de busqueda${error}`)
+    // );
   }
   /**
    *
@@ -163,7 +194,7 @@ export class FileConverter {
    * @then this.createHeader call for the function
    */
   public async composeObject(dataWorked: any) {
-    return new Promise<object>((resolve, reject) => {
+    return new Promise<Idata>((resolve, reject) => {
       let nodos: [] = dataWorked.map((nodo: []) => {
         let xFile = {};
         nodo.forEach((elemento, index) => {
@@ -171,36 +202,39 @@ export class FileConverter {
         });
         return xFile;
       });
-
-      fs.writeFileSync(
-        `src/superjson/${this.fileJsonName.split(".")[0]}.json`,
-        JSON.stringify(nodos, null, 2),
-        { flag: "a+" }
-      );
-      setTimeout(() => {
-        resolve(nodos);
-      }, 2300);
-    }) 
-         .then(() =>  {
-            setTimeout(()=>{
-              this.createHeader()
-            },2600)
-         })
-        .catch((error) =>
-          console.log(`No se puede mapear el dataworked ${error}`)
-        );
- 
-    /*   .then((nodos) => {
-        console.log("datos guardados");
+      const exist = fs.existsSync(`${jsonPath}/${this.fileJsonName.split(".")[0]}.json`)
+      if (exist) {
+        console.log("no existe vamos a grabarlo ✋");
         fs.writeFileSync(
-          "src/superjson/zordTest088.json",
+          `${jsonPath}/${this.fileJsonName.split(".")[0]}.json`,
           JSON.stringify(nodos, null, 2),
           { flag: "a+" }
         );
-        
-      }) */
-     
+        setTimeout(() => {
+          resolve({
+            message:
+              "Se ha guardado un nuevo objeto al sistema de archivos 📨 ",
+            payload: nodos,
+          });
+        }, 3000);
+      } else {
+        console.log("Sigamos adelante 👉");
+        fs.writeFileSync(
+          `${jsonPath}/${this.fileJsonName.split(".")[0]}.json`,
+          JSON.stringify(nodos, null, 2),
+          { flag: "a+" }
+        );
+        setTimeout(() => {
+          resolve({
+            message:
+              "Se ha guardado un nuevo objeto al sistema de archivos 📨 ",
+            payload: nodos,
+          });
+        }, 3000);
+      }
+    });//end of the promise
   }
+
   /**
    * @var faceKey contain a new array of strings extracted for the previous xlsx createing a header for a better search and data manipulation
    * @var hd2 treat @var worksheet createing a new AoA(Array of Arrays)
@@ -210,10 +244,10 @@ export class FileConverter {
    * @then write the new file in one array with keywords
    */
   public async createHeader() {
-    console.log("no llegamos o si ??")
-    return new Promise((resolve, reject) => {
+    return new Promise<Idata>((resolve, reject) => {
       let faceKey: string[] = [];
       let hd2: [][] = xlsx.utils.sheet_to_json(this.workSheet, { header: 1 });
+      const exist = fs.existsSync(`${headerPath}/${this.fileJsonName.split(".")[0]}Header.js`)
       let seccion: [][] = hd2.slice(0, 20);
       seccion.map((row) => {
         if (row.length <= 9) {
@@ -242,18 +276,32 @@ export class FileConverter {
           });
         });
       console.log(faceKey, "final fantasy");
-      resolve(this.header);
-      setTimeout(() => {
-        console.log("Creando el header de Caratula 📂");
-
-        resolve();
-      }, 2800);
-    }).then((header) => {
-      fs.writeFileSync(
-        `src/headers/${this.fileJsonName.split(".")[0]}Header.js`,
-        JSON.stringify(header, null, 2)
-      );
-    });
+        if(exist){
+          console.log("no existe vamos a grabarlo ✋");
+          fs.writeFileSync(
+            `${headerPath}/${this.fileJsonName.split(".")[0]}Header.js`,
+            JSON.stringify({...this.header,faceKey}, null, 2)
+          );
+          setTimeout(() => {
+            resolve({
+              message: "Se ha creado un header de palabras clave para Caratula 📂",
+              payload: this.header,
+            });
+          }, 3500);
+        }else{
+          fs.writeFileSync(
+            `${headerPath}/${this.fileJsonName.split(".")[0]}Header.js`,
+            JSON.stringify({...this.header,faceKey}, null, 2)
+          );
+          setTimeout(() => {
+            resolve({
+              message: "Se ha creado un header de palabras clave para Caratula 📂",
+              payload: this.header,
+            });
+          }, 3500);
+        }
+     
+    }); 
   }
 
   /**
@@ -261,14 +309,19 @@ export class FileConverter {
    * @param nodos came from promes of composeObject ready to grep an save to the database
    */
 
-  public async writeTodb() {
-    console.log("si llegamos a writeTodb!!!", Object.keys(this.nodos).length);
-    return new Promise((resolve, reject) => {
-      let pice = this.nodos.slice(0, 10);
+  public async writeTodb(nodos:any) {
+     return new Promise<Idata>((resolve, reject) => {
+      let pice = nodos.slice(0, 10);
+      console.log(pice)
       pice.forEach((item: ISheet) => {
-        console.log(item, "en la funcion de la cola");
-        const sheet = SingleSheet.create({ item: item });
-      });
-    }).then(() => console.log("Guardado a la base listo ✅"));
+        const sheet = SingleSheet.create({
+         
+        item
+          });
+      }); 
+      setTimeout(()=>{
+          resolve({message:"Guardado a la base listo ✅",payload:true})
+      },4000)
+    }) 
   }
 } //end of class
