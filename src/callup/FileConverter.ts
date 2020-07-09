@@ -157,7 +157,21 @@ export class FileConverter {
           }
         });
         if (texted.includes("TELEFONO") === true) {
-          this.constructedSearch = texted;
+          this.constructedSearch = texted.map((item:string)=>{
+            if(item === "TELEFONO") return item.replace("TELEFONO","MSISDN")
+            if(item === "TIPO")return item.replace("TIPO","TYPE")
+            if(item === "NUMEROA")return item.replace("NUMEROA","SIDEA")
+            if(item === "NUMEROB")return item.replace("NUMEROB","SIDEB")
+            if(item === "FECHA")return item.replace("FECHA","STARTDATE")
+            if(item === "HORA")return item.replace("HORA","STARTHOUR")
+            if(item === "DURACSEG")return item.replace("DURACSEG","DURATION")
+            if(item === "IMEI")return item.replace("IMEI","IMEI")
+            if(item === "UBICACIONGEOGRAFICA(LATITUDLNG)")return item.replace("UBICACIONGEOGRAFICA(LATITUDLNG)", "LAT")
+            if(item === "UBICACIONGEOGRAFICA")return item.replace("UBICACIONGEOGRAFICA","LAT")
+            //if(item === "/ LONGITUD)" || "NODEFINIDA")return item.replace("/LONGITUD"||"NODEFINIDA","LNG")
+            //if(item === "NODEFINIDA")return item.replace("TIPO","LECHE")
+            if(item === "AZIMUTH") return item.replace("AZIMUTH","AZIMUTH")
+          })
           console.log(this.constructedSearch)
           this.dataworked = aoa.slice(index + 1);
           console.log(this.dataworked.slice(0, 1));
@@ -311,14 +325,15 @@ export class FileConverter {
 
   public async writeTodb(nodos:any) {
      return new Promise<Idata>((resolve, reject) => {
-      let pice = nodos.slice(0, 10);
-      console.log(pice)
-      pice.forEach((item: ISheet) => {
-        const sheet = SingleSheet.create({
-         
-        item
-          });
-      }); 
+      let pice = nodos.slice(0,10);
+      console.log(pice,"si estamos aca ")
+    /*   pice.forEach((item: ISheet) => {
+        const sheet = SingleSheet.create({item:item});
+      });  */
+      //!version de objeto por objeto 
+      const bigSheet = SingleSheet.create({item:pice})
+      console.log(bigSheet,"not to risk at all!!")
+      //! version de hoja completa por objetos arroja un arreglo de objetos en el documento 
       setTimeout(()=>{
           resolve({message:"Guardado a la base listo ✅",payload:true})
       },4000)
