@@ -6,10 +6,14 @@ import bodyParser from "body-parser";
 import fileUpload from "express-fileupload";
 import mongoose from "mongoose";
 
-// "mongodb://salemm:salemm2019@ds023603.mlab.com:23603/caska-db"
+// "mongodb://salemm:salemm2018@ds023603.mlab.com:23603/caska-db"
+//mongodb://salemm:salemm2018@ds159527.mlab.com:59527/xlsxconverter
+//mongodb+srv://salemm:salemmidr2020@xlsxconverter.rjbpw.mongodb.net/test
+//loca    "mongodb://localhost:27017/xfileBigSheet"
 mongoose
 .connect(
- "mongodb://localhost:27017/xfileBigSheet",{
+ 
+ "mongodb+srv://salemm:salemmidr2020@xlsxconverter.rjbpw.mongodb.net/test",{
     useNewUrlParser:true,
     useUnifiedTopology:true
   })
