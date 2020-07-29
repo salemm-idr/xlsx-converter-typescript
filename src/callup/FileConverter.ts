@@ -3,8 +3,10 @@ import fileUpload from "express-fileupload";
 import path from "path";
 import SingleSheet, { ISheet } from "../models/SingleSheet";
 import Sheet from "../models/Sheet"; //lleva la interface
+import Caratula from "../models/Caratula"
 import fs,{promises} from "fs";
 import { Request, Response } from "express";
+import { send } from "process";
 type UploadedFile = fileUpload.UploadedFile;
 const directoryPath = path.resolve("src/uploads");
 const jsonPath = path.resolve("src/superjson");
@@ -114,7 +116,7 @@ export class FileConverter {
         worksheet = workbook.Sheets[tab];
         console.log(tab, "nombre de la tabla individual 🚀");
         let data: (string | number)[] = xlsx.utils.sheet_to_json(worksheet, {
-          header: 1,blankrows:true,defval:"nodefinida"
+          header: 1,blankrows:false,defval:"nodefinida"
         });
         return data;
         /*   toSave.name = tab;
@@ -157,6 +159,7 @@ export class FileConverter {
           }
         });
         if (texted.includes("TELEFONO") === true) {
+          console.log(texted,"this is texted before")
           this.constructedSearch = texted.map((item:string)=>{
             if(item === "TELEFONO") return item.replace("TELEFONO","MSISDN")
             if(item === "TIPO")return item.replace("TIPO","TYPE")
@@ -166,13 +169,15 @@ export class FileConverter {
             if(item === "HORA")return item.replace("HORA","STARTHOUR")
             if(item === "DURACSEG")return item.replace("DURACSEG","DURATION")
             if(item === "IMEI")return item.replace("IMEI","IMEI")
-            if(item === "UBICACIONGEOGRAFICA(LATITUDLNG)")return item.replace("UBICACIONGEOGRAFICA(LATITUDLNG)", "LAT")
-            if(item === "UBICACIONGEOGRAFICA")return item.replace("UBICACIONGEOGRAFICA","LAT")
-            //if(item === "/ LONGITUD)" || "NODEFINIDA")return item.replace("/LONGITUD"||"NODEFINIDA","LNG")
-            //if(item === "NODEFINIDA")return item.replace("TIPO","LECHE")
+            //if(item === "UBICACIONGEOGRAFICA")return item.replace("UBICACIONGEOGRAFICA","LAT")
+            //if(item === "UBICACIONGEOGRAFICA(LATITUDLNG)")return item.replace("UBICACIONGEOGRAFICA(LATITUDLNG)","LAT")
+            if(item === "UBICACIONGEOGRAFICA(LATITUD")return item.replace("UBICACIONGEOGRAFICA(LATITUD","LAT")
+            if(item === "/LONGITUD)")return item.replace("/LONGITUD","LNG")
             if(item === "AZIMUTH") return item.replace("AZIMUTH","AZIMUTH")
+            //if(item === "UBICACIONGEOGRAFICA(LATITUDLNG)")return item.replace("UBICACIONGEOGRAFICA(LATITUDLNG)", "LAT")
+            //if(item === "NODEFINIDA")return item.replace("TIPO","LECHE")
           })
-          console.log(this.constructedSearch)
+          console.log(this.constructedSearch,"this is the constructed search")
           this.dataworked = aoa.slice(index + 1);
           console.log(this.dataworked.slice(0, 1));
           //resolve(wrote.hojaAoA.slice(index + 1));
@@ -260,8 +265,72 @@ export class FileConverter {
   public async createHeader() {
     return new Promise<Idata>((resolve, reject) => {
       let faceKey: string[] = [];
-      let hd2: [][] = xlsx.utils.sheet_to_json(this.workSheet, { header: 1 });
-      const exist = fs.existsSync(`${headerPath}/${this.fileJsonName.split(".")[0]}Header.js`)
+      let hd2 = xlsx.utils.sheet_to_csv(this.workSheet,{RS:"\n",strip:true});
+      let muestra = hd2.slice(0,800)
+      let str = muestra.toUpperCase().trim()
+      let headerSheet =""
+      let infoAddress = ""
+      let infoImei = ""
+      let infoName = ""
+      let infoPlat = ""
+      let infoFecha = ""
+      
+      let pivoAddres = ""
+      let pivoName = ""
+      let pivoCel = ""
+      if(str.includes("TELEFONO")=== true){
+
+        headerSheet = str.split("TELEFONO")[0]
+        console.log(headerSheet)
+         pivoAddres = headerSheet.split("DIRECCIÓN")[1]
+          //console.log(pivoAddres,"\n------------------Extracto de direccion \n")
+      
+           if(headerSheet.includes("DIRECCIÓN") === true){
+              pivoName = headerSheet.split("DIRECCIÓN")[0]
+               // console.log(pivoName,"\n----------- extracto de nombre infoName \n")
+                  }
+      
+                    if(pivoName.includes("NOMBRE")=== true){
+                       //console.log(pivoName.split("NOMBRE")[1],"\n----------- cadena de nombre REAL \n")
+                         infoName= pivoName.split("NOMBRE")[1]
+                         
+                          }
+                    if(pivoAddres.includes("IMEI")===true){
+                        infoAddress = pivoAddres.split('IMEI')[0]
+                        infoImei = pivoAddres.split("IMEI")[1]                
+                          //console.log(infoAddress,"\n------------------cadena de direccion REAL------\n")
+                          //console.log(infoCel,"\n------------------cadena de celular REAL------\n")
+                       } else{
+                         infoAddress=pivoAddres
+                         //console.log(infoAddress)
+                       }
+                        if(infoAddress.includes("PLATAFORMA") === true){
+                         infoPlat = infoAddress.split("PLATAFORMA")[1]
+                        infoAddress = infoAddress.split("PLATAFORMA")[0]
+                         }
+                         if(infoPlat.includes("FECHA")===true){
+                           infoFecha= infoPlat.split("FECHA")[1]
+                           infoPlat= infoPlat.split("FECHA")[0]
+                         }
+      
+       }
+       
+       let data = {
+        nombre: infoName,
+        address: infoAddress,
+        date: infoFecha,
+        plataform: infoPlat,
+        imei: infoImei
+      }
+      console.log(data,"-----------\n")
+      //fs.writeFileSync(`src/headers/extract.txt`, dir)
+      setTimeout(() => {
+            resolve({
+              message: "Se ha creado un header de palabras clave para Caratula 📂",
+              payload: data,
+            });
+          }, 3500);
+    /*   const exist = fs.existsSync(`${headerPath}/${this.fileJsonName.split(".")[0]}Header.js`)
       let seccion: [][] = hd2.slice(0, 20);
       seccion.map((row) => {
         if (row.length <= 9) {
@@ -271,7 +340,7 @@ export class FileConverter {
       this.header
         .reduce((acc: [][], currValue: []) => {
           return acc.concat(currValue);
-        }, [])
+        }, [])  
         .filter(Boolean)
         .map((item) => {
           let tag = item.toString().trim().toUpperCase().split(":");
@@ -313,7 +382,7 @@ export class FileConverter {
               payload: this.header,
             });
           }, 3500);
-        }
+        } */
      
     }); 
   }
@@ -323,17 +392,21 @@ export class FileConverter {
    * @param nodos came from promes of composeObject ready to grep an save to the database
    */
 
-  public async writeTodb(nodos:any) {
+  public async writeTodb(nodos:any,dirinfo:any) {
      return new Promise<Idata>((resolve, reject) => {
       let pice = nodos.slice(0,10);
-      console.log(pice,"si estamos aca ")
+      console.log(dirinfo,"on db")
+      console.log(pice,"Muestra de nodos")
+      const casualInfo = SingleSheet.create({item:dirinfo})
+      
     /*   pice.forEach((item: ISheet) => {
         const sheet = SingleSheet.create({item:item});
       });  */
       //!version de objeto por objeto 
-      const bigSheet = SingleSheet.create({item:pice})
-      console.log(bigSheet,"not to risk at all!!")
+      //const bigSheet = SingleSheet.create({item:pice})
+      //console.log(bigSheet,"not to risk at all!!")
       //! version de hoja completa por objetos arroja un arreglo de objetos en el documento 
+      //*const caratula = Caratula.create({})
       setTimeout(()=>{
           resolve({message:"Guardado a la base listo ✅",payload:true})
       },4000)

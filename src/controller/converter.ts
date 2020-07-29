@@ -22,7 +22,7 @@ export class Converter {
     const nodos      = await Xfile.jsonTreatment(construct.payload); //* limpia el texto del aoa consigue el header para la busqueda y lo guarda 
     const compose    = await Xfile.composeObject(nodos.payload); //* guarda un nuevo objeto creado a partir de las llaves nuevas
     const jsonHeader = await Xfile.createHeader();//* crea un arreglo apartir de el header extraido con las plabaras clave de las nuevas caratulas
-    const toDb       = await Xfile.writeTodb(compose.payload)
+    const toDb       = await Xfile.writeTodb(compose.payload,jsonHeader.payload)
       try {
          const allPromises = Promise.all([moveFile,readfile,construct,nodos,compose,jsonHeader,toDb])
          .then((responses)=> responses.forEach((response) => console.log(response.message)))

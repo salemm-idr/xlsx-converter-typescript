@@ -1,7 +1,7 @@
 import mongoose, {Schema, Document, Model} from 'mongoose';
 
 export interface ISheet extends Document{ 
-  item:object
+  item:object 
 }
 
 const SingleSheetSchema = new Schema({
