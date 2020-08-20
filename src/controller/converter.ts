@@ -40,12 +40,27 @@ export class Converter {
 
    public async  getFile(req:Request,res:Response){
          console.log("hola getfile")
-        const file = fs.readFileSync("src/superjson/zordTest01.json",{encoding:"utf-8"})
+       /*  const file = fs.readFileSync("src/superjson/zordTest01.json",{encoding:"utf-8"})
         res.download(file,"cachitos.json",((error)=>{
             if(error) return res.status(404).json({message:`Algo ha saldo mal ${error}`})
 
-        }))
+        })) */
+        res.status(200).json({message:"Si llegamos a el get regresa un mensaje a sion"})
         //res.attachment("papitas.json")
+   }
+   public async goMaps(req:Request, res:Response){
+     const { xdress } = req.body
+     let ser = xdress.replace(/\s+/g,'+')
+     console.log(ser)
+     try {
+      const llamada =  await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${ser}&key=AIzaSyBGLJPCYmdhGsFTNwO0W4s44C-s_FZalqQ`)
+       const {results} = await llamada.json()
+       console.log(results[0])
+      res.status(200).json({mesage:"si llego lo que pediste",axdress:results[0]})
+     } catch (error) {
+       res.status(404).json({message:"algo no ha ido bien con la peticion"})
+       throw new Error("no se ha podido enviar la peticion")
+     }
    }
 
 

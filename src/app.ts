@@ -11,9 +11,7 @@ import mongoose from "mongoose";
 //mongodb+srv://salemm:salemmidr2020@xlsxconverter.rjbpw.mongodb.net/test
 //loca    "mongodb://localhost:27017/xfileBigSheet"
 mongoose
-.connect(
- 
- "mongodb+srv://salemm:salemmidr2020@xlsxconverter.rjbpw.mongodb.net/test",{
+.connect("mongodb+srv://salemm:salemmidr2020@xlsxconverter.rjbpw.mongodb.net/test",{
     useNewUrlParser:true,
     useUnifiedTopology:true
   })
@@ -33,7 +31,6 @@ app.use(
   //  tempFileDir: "src/uploads"
   })
 );
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 

@@ -46,7 +46,7 @@ export class FileConverter {
 
   public async moveFile() {
     return new Promise<Idata>((resolve, reject) => {
-      console.log(this.xlsxFile);
+      console.log(this.xlsxFile,"defined not!!!");
       const { file } = this.xlsxFile;
       file.mv(`${directoryPath}/${file.name}`, (err: any) => {
         if (err) {
@@ -316,14 +316,14 @@ export class FileConverter {
        }
         
        let data = {
-        nombre: infoName,
-        address: infoAddress,
-        date: infoFecha,
-        plataform: infoPlat,
-        imei: infoImei
+        nombre: infoName.replace(/[^a-zA-Z ]/g, ""),
+        address: infoAddress.replace(/[^a-zA-Z ]/g, ""),
+        date: infoFecha.replace(/[^a-zA-Z ]\n/g, ""),
+        plataform: infoPlat.replace(/[^a-zA-Z ]/g, ""),
+        imei: infoImei.replace(/[^a-zA-Z ]\n/g, ","),
       }
       console.log(data,"-----------\n")
-      //fs.writeFileSync(`src/headers/extract.txt`, dir)
+      fs.writeFileSync(`${headerPath}/${this.fileJsonName.split(".")[0]}Header.js`, JSON.stringify(data))
       setTimeout(() => {
             resolve({
               message: "Se ha creado un header de palabras clave para Caratula 📂",
@@ -396,9 +396,9 @@ export class FileConverter {
      return new Promise<Idata>((resolve, reject) => {
       let pice = nodos.slice(0,10);
       console.log(dirinfo,"on db")
-      console.log(pice,"Muestra de nodos")
-      const casualInfo = SingleSheet.create({item:dirinfo})
-      
+      //console.log(pice,"Muestra de nodos")
+     const caraSave =  SingleSheet.create({item:dirinfo})
+      console.log(caraSave)
     /*   pice.forEach((item: ISheet) => {
         const sheet = SingleSheet.create({item:item});
       });  */
