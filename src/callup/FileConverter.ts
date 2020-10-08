@@ -3,8 +3,8 @@ import fileUpload from "express-fileupload";
 import path from "path";
 import SingleSheet, { ISheet } from "../models/SingleSheet";
 import Sheet from "../models/Sheet"; //lleva la interface
-import Caratula from "../models/Caratula"
-import fs,{promises} from "fs";
+import Cover from "../models/Cover";
+import fs, { promises } from "fs";
 import { Request, Response } from "express";
 import { send } from "process";
 type UploadedFile = fileUpload.UploadedFile;
@@ -46,7 +46,7 @@ export class FileConverter {
 
   public async moveFile() {
     return new Promise<Idata>((resolve, reject) => {
-      console.log(this.xlsxFile,"defined not!!!");
+      console.log(this.xlsxFile, "defined not!!!");
       const { file } = this.xlsxFile;
       file.mv(`${directoryPath}/${file.name}`, (err: any) => {
         if (err) {
@@ -116,7 +116,9 @@ export class FileConverter {
         worksheet = workbook.Sheets[tab];
         console.log(tab, "nombre de la tabla individual 🚀");
         let data: (string | number)[] = xlsx.utils.sheet_to_json(worksheet, {
-          header: 1,blankrows:false,defval:"nodefinida"
+          header: 1,
+          blankrows: false,
+          defval: "nodefinida",
         });
         return data;
         /*   toSave.name = tab;
@@ -154,30 +156,32 @@ export class FileConverter {
             let recortado = innerText
               .toUpperCase()
               .trim()
-              .replace(/[t\n\r\s.,]+/g, '')//.replace(/t[\r\n\s.,]+/g, "");
+              .replace(/[t\n\r\s.,]+/g, ""); //.replace(/t[\r\n\s.,]+/g, "");
             return recortado;
           }
         });
         if (texted.includes("TELEFONO") === true) {
-          console.log(texted,"this is texted before")
-          this.constructedSearch = texted.map((item:string)=>{
-            if(item === "TELEFONO") return item.replace("TELEFONO","MSISDN")
-            if(item === "TIPO")return item.replace("TIPO","TYPE")
-            if(item === "NUMEROA")return item.replace("NUMEROA","SIDEA")
-            if(item === "NUMEROB")return item.replace("NUMEROB","SIDEB")
-            if(item === "FECHA")return item.replace("FECHA","STARTDATE")
-            if(item === "HORA")return item.replace("HORA","STARTHOUR")
-            if(item === "DURACSEG")return item.replace("DURACSEG","DURATION")
-            if(item === "IMEI")return item.replace("IMEI","IMEI")
+          console.log(texted, "this is texted before");
+          this.constructedSearch = texted.map((item: string) => {
+            if (item === "TELEFONO") return item.replace("TELEFONO", "MSISDN");
+            if (item === "TIPO") return item.replace("TIPO", "TYPE");
+            if (item === "NUMEROA") return item.replace("NUMEROA", "SIDEA");
+            if (item === "NUMEROB") return item.replace("NUMEROB", "SIDEB");
+            if (item === "FECHA") return item.replace("FECHA", "STARTDATE");
+            if (item === "HORA") return item.replace("HORA", "STARTHOUR");
+            if (item === "DURACSEG")
+              return item.replace("DURACSEG", "DURATION");
+            if (item === "IMEI") return item.replace("IMEI", "IMEI");
             //if(item === "UBICACIONGEOGRAFICA")return item.replace("UBICACIONGEOGRAFICA","LAT")
             //if(item === "UBICACIONGEOGRAFICA(LATITUDLNG)")return item.replace("UBICACIONGEOGRAFICA(LATITUDLNG)","LAT")
-            if(item === "UBICACIONGEOGRAFICA(LATITUD")return item.replace("UBICACIONGEOGRAFICA(LATITUD","LAT")
-            if(item === "/LONGITUD)")return item.replace("/LONGITUD","LNG")
-            if(item === "AZIMUTH") return item.replace("AZIMUTH","AZIMUTH")
+            if (item === "UBICACIONGEOGRAFICA(LATITUD")
+              return item.replace("UBICACIONGEOGRAFICA(LATITUD", "LAT");
+            if (item === "/LONGITUD)") return item.replace("/LONGITUD", "LNG");
+            if (item === "AZIMUTH") return item.replace("AZIMUTH", "AZIMUTH");
             //if(item === "UBICACIONGEOGRAFICA(LATITUDLNG)")return item.replace("UBICACIONGEOGRAFICA(LATITUDLNG)", "LAT")
             //if(item === "NODEFINIDA")return item.replace("TIPO","LECHE")
-          })
-          console.log(this.constructedSearch,"this is the constructed search")
+          });
+          console.log(this.constructedSearch, "this is the constructed search");
           this.dataworked = aoa.slice(index + 1);
           console.log(this.dataworked.slice(0, 1));
           //resolve(wrote.hojaAoA.slice(index + 1));
@@ -221,7 +225,9 @@ export class FileConverter {
         });
         return xFile;
       });
-      const exist = fs.existsSync(`${jsonPath}/${this.fileJsonName.split(".")[0]}.json`)
+      const exist = fs.existsSync(
+        `${jsonPath}/${this.fileJsonName.split(".")[0]}.json`
+      );
       if (exist) {
         console.log("no existe vamos a grabarlo ✋");
         fs.writeFileSync(
@@ -251,7 +257,7 @@ export class FileConverter {
           });
         }, 3000);
       }
-    });//end of the promise
+    }); //end of the promise
   }
 
   /**
@@ -265,126 +271,75 @@ export class FileConverter {
   public async createHeader() {
     return new Promise<Idata>((resolve, reject) => {
       let faceKey: string[] = [];
-      let hd2 = xlsx.utils.sheet_to_csv(this.workSheet,{RS:"\n",strip:true});
-      let muestra = hd2.slice(0,800)
-      let str = muestra.toUpperCase().trim()
-      let headerSheet =""
-      let infoAddress = ""
-      let infoImei = ""
-      let infoName = ""
-      let infoPlat = ""
-      let infoFecha = ""
-      
-      let pivoAddres = ""
-      let pivoName = ""
-      let pivoCel = ""
-      if(str.includes("TELEFONO")=== true){
-
-        headerSheet = str.split("TELEFONO")[0]
-        console.log(headerSheet)
-         pivoAddres = headerSheet.split("DIRECCIÓN")[1]
-          //console.log(pivoAddres,"\n------------------Extracto de direccion \n")
-      
-           if(headerSheet.includes("DIRECCIÓN") === true){
-              pivoName = headerSheet.split("DIRECCIÓN")[0]
-               // console.log(pivoName,"\n----------- extracto de nombre infoName \n")
-                  }
-      
-                    if(pivoName.includes("NOMBRE")=== true){
-                       //console.log(pivoName.split("NOMBRE")[1],"\n----------- cadena de nombre REAL \n")
-                         infoName= pivoName.split("NOMBRE")[1]
-                         
-                          }
-                    if(pivoAddres.includes("IMEI")===true){
-                        infoAddress = pivoAddres.split('IMEI')[0]
-                        infoImei = pivoAddres.split("IMEI")[1]                
-                          //console.log(infoAddress,"\n------------------cadena de direccion REAL------\n")
-                          //console.log(infoCel,"\n------------------cadena de celular REAL------\n")
-                       } else{
-                         infoAddress=pivoAddres
-                         //console.log(infoAddress)
-                       }
-                        if(infoAddress.includes("PLATAFORMA") === true){
-                         infoPlat = infoAddress.split("PLATAFORMA")[1]
-                        infoAddress = infoAddress.split("PLATAFORMA")[0]
-                         }
-                         if(infoPlat.includes("FECHA")===true){
-                           infoFecha= infoPlat.split("FECHA")[1]
-                           infoPlat= infoPlat.split("FECHA")[0]
-                         }
-      
-       }
-        
-       let data = {
-        nombre: infoName.replace(/[^a-zA-Z ]/g, ""),
-        address: infoAddress.replace(/[^a-zA-Z ]/g, ""),
-        date: infoFecha.replace(/[^a-zA-Z ]\n/g, ""),
-        plataform: infoPlat.replace(/[^a-zA-Z ]/g, ""),
-        imei: infoImei.replace(/[^a-zA-Z ]\n/g, ","),
-      }
-      console.log(data,"-----------\n")
-      fs.writeFileSync(`${headerPath}/${this.fileJsonName.split(".")[0]}Header.js`, JSON.stringify(data))
-      setTimeout(() => {
-            resolve({
-              message: "Se ha creado un header de palabras clave para Caratula 📂",
-              payload: data,
-            });
-          }, 3500);
-    /*   const exist = fs.existsSync(`${headerPath}/${this.fileJsonName.split(".")[0]}Header.js`)
-      let seccion: [][] = hd2.slice(0, 20);
-      seccion.map((row) => {
-        if (row.length <= 9) {
-          this.header = [...this.header, row];
-        }
+      let hd2 = xlsx.utils.sheet_to_csv(this.workSheet, {
+        RS: "\n",
+        strip: true,
       });
-      this.header
-        .reduce((acc: [][], currValue: []) => {
-          return acc.concat(currValue);
-        }, [])  
-        .filter(Boolean)
-        .map((item) => {
-          let tag = item.toString().trim().toUpperCase().split(":");
-          //console.log(tag)
-          tag.forEach((tag: string) => {
-            if (tag === "NOMBRE") return (faceKey = [...faceKey, tag]);
-            if (tag === "DIRECCIÓN") return (faceKey = [...faceKey, tag]);
-            if (tag === "PLATAFORMA") return (faceKey = [...faceKey, tag]);
-            if (tag === "FECHA ACTIVACIÓN")
-              return (faceKey = [...faceKey, tag]);
-            if (tag === "IMSI") return (faceKey = [...faceKey, tag]);
-            if (tag.includes("LÍNEA") === true) {
-              let splited = tag.split(" ");
-              return (faceKey = [...faceKey, splited[0]]);
-            }
-          });
+      let muestra = hd2.slice(0, 800);
+      let str = muestra.toUpperCase().trim();
+      let headerSheet = "";
+      let infoAddress = "";
+      let infoImei = "";
+      let infoName = "";
+      let infoPlat = "";
+      let infoFecha = "";
+
+      let pivoAddres = "";
+      let pivoName = "";
+      let pivoCel = "";
+      if (str.includes("TELEFONO") === true) {
+        headerSheet = str.split("TELEFONO")[0];
+        console.log(headerSheet);
+        pivoAddres = headerSheet.split("DIRECCIÓN")[1];
+        //console.log(pivoAddres,"\n------------------Extracto de direccion \n")
+
+        if (headerSheet.includes("DIRECCIÓN") === true) {
+          pivoName = headerSheet.split("DIRECCIÓN")[0];
+          // console.log(pivoName,"\n----------- extracto de nombre infoName \n")
+        }
+
+        if (pivoName.includes("NOMBRE") === true) {
+          //console.log(pivoName.split("NOMBRE")[1],"\n----------- cadena de nombre REAL \n")
+          infoName = pivoName.split("NOMBRE")[1];
+        }
+        if (pivoAddres.includes("IMEI") === true) {
+          infoAddress = pivoAddres.split("IMEI")[0];
+          infoImei = pivoAddres.split("IMEI")[1];
+          //console.log(infoAddress,"\n------------------cadena de direccion REAL------\n")
+          //console.log(infoCel,"\n------------------cadena de celular REAL------\n")
+        } else {
+          infoAddress = pivoAddres;
+          //console.log(infoAddress)
+        }
+        if (infoAddress.includes("PLATAFORMA") === true) {
+          infoPlat = infoAddress.split("PLATAFORMA")[1];
+          infoAddress = infoAddress.split("PLATAFORMA")[0];
+        }
+        if (infoPlat.includes("FECHA") === true) {
+          infoFecha = infoPlat.split("FECHA")[1];
+          infoPlat = infoPlat.split("FECHA")[0];
+        }
+      }
+
+      let data = {
+        complete_name: infoName.replace(/[^a-zA-Z ]/g, ""),
+        residence: infoAddress.replace(/[^a-zA-Z ]/g, ""),
+        activationDate: infoFecha.replace(/[^a-zA-Z ]\n/g, ""),
+        plansName: infoPlat.replace(/[^a-zA-Z ]/g, ""),
+        imsi: infoImei.replace(/[^a-zA-Z ]\n/g, ","),
+      };
+      console.log(data, "-----------\n");
+      fs.writeFileSync(
+        `${headerPath}/${this.fileJsonName.split(".")[0]}Header.js`,
+        JSON.stringify(data)
+      );
+      setTimeout(() => {
+        resolve({
+          message: "Se ha creado un header de palabras clave para Caratula 📂",
+          payload: data,
         });
-      console.log(faceKey, "final fantasy");
-        if(exist){
-          console.log("no existe vamos a grabarlo ✋");
-          fs.writeFileSync(
-            `${headerPath}/${this.fileJsonName.split(".")[0]}Header.js`,
-            JSON.stringify({...this.header,faceKey}, null, 2)
-          );
-          setTimeout(() => {
-            resolve({
-              message: "Se ha creado un header de palabras clave para Caratula 📂",
-              payload: this.header,
-            });
-          }, 3500);
-        }else{
-          fs.writeFileSync(
-            `${headerPath}/${this.fileJsonName.split(".")[0]}Header.js`,
-            JSON.stringify({...this.header,faceKey}, null, 2)
-          );
-          setTimeout(() => {
-            resolve({
-              message: "Se ha creado un header de palabras clave para Caratula 📂",
-              payload: this.header,
-            });
-          }, 3500);
-        } */
-     
-    }); 
+      }, 3500);
+    });
   }
 
   /**
@@ -392,24 +347,35 @@ export class FileConverter {
    * @param nodos came from promes of composeObject ready to grep an save to the database
    */
 
-  public async writeTodb(nodos:any,dirinfo:any) {
-     return new Promise<Idata>((resolve, reject) => {
-      let pice = nodos.slice(0,10);
-      console.log(dirinfo,"on db")
+  public async writeTodb(nodos: any, dirinfo: any) {
+    return new Promise<Idata>((resolve, reject) => {
+      let pice = nodos.slice(0, 10);
+      console.log(dirinfo, "on db");
+      let caraId = "";
+
       //console.log(pice,"Muestra de nodos")
-     const caraSave =  SingleSheet.create({item:dirinfo})
-      console.log(caraSave)
-    /*   pice.forEach((item: ISheet) => {
+
+      const caraSave = Cover.create({
+        name: dirinfo.complete_name,
+        residence: dirinfo.residence,
+        activationDate: dirinfo.activationDate,
+        plansName: dirinfo.plansName,
+        imsi: dirinfo.imsi,
+      }).then((res) => {
+        caraId = res._id;
+      });
+      /*   pice.forEach((item: ISheet) => {
         const sheet = SingleSheet.create({item:item});
       });  */
-      //!version de objeto por objeto 
+
+      //!version de objeto por objeto
       //const bigSheet = SingleSheet.create({item:pice})
       //console.log(bigSheet,"not to risk at all!!")
-      //! version de hoja completa por objetos arroja un arreglo de objetos en el documento 
+      //! version de hoja completa por objetos arroja un arreglo de objetos en el documento
       //*const caratula = Caratula.create({})
-      setTimeout(()=>{
-          resolve({message:"Guardado a la base listo ✅",payload:true})
-      },4000)
-    }) 
+      setTimeout(() => {
+        resolve({ message: "Guardado a la base listo ✅", payload: caraId });
+      }, 4000);
+    });
   }
 } //end of class

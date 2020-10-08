@@ -10,10 +10,11 @@ import mongoose from "mongoose";
 //mongodb://salemm:salemm2018@ds159527.mlab.com:59527/xlsxconverter
 //mongodb+srv://salemm:salemmidr2020@xlsxconverter.rjbpw.mongodb.net/test
 //loca    "mongodb://localhost:27017/xfileBigSheet"
+//"mongodb+srv://salemm:salemmidr2020@xlsxconverter.rjbpw.mongodb.net/test"
 mongoose
-.connect("mongodb+srv://salemm:salemmidr2020@xlsxconverter.rjbpw.mongodb.net/test",{
+.connect("mongodb://localhost:27017/sion_online",{
     useNewUrlParser:true,
-    useUnifiedTopology:true
+    useUnifiedTopology:true,
   })
   .then(x => {console.log(
     `Conectado a mongo database 🔽  named: ${x.connections[0].name}`
@@ -31,6 +32,8 @@ app.use(
   //  tempFileDir: "src/uploads"
   })
 );
+app.use(express.json()); // recive info en json de parte de express
+app.use(bodyParser.json());// por si no aplica la de arriba esta lo hace con el mismo bodyparser
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
